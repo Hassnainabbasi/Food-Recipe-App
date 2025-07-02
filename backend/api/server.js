@@ -2,6 +2,8 @@ import express from "express";
 import { db } from "./config/db.js";
 import { favoritesTable } from "./db/schema.js";
 import { and, eq } from "drizzle-orm";
+import { ENV } from "./config/env.js";
+import job from "./config/cron.js";
 
 const app = express();
 const PORT = 5001;
@@ -11,6 +13,8 @@ app.use(express.json());
 app.get("/api/health", (req, res) => {
   res.status(200).json({ success: true });
 });
+
+job.start();
 
 app.delete("/api/favorites/:userId/:recipeId", async (req, res) => {
   try {
@@ -37,7 +41,7 @@ app.get("/api/favorites/:userId", async (req, res) => {
       .select()
       .from(favoritesTable)
       .where(eq(favoritesTable.userId, userId));
-    res.status(200).json(userFavorites)
+    res.status(200).json(userFavorites);
   } catch (e) {
     console.log(e.message);
     res.status(500).json({ error: "Something went wrong" });
