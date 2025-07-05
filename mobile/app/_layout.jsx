@@ -3,7 +3,8 @@ import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { Slot, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { COLORS } from "../constant/color"
+import { COLORS } from "../constant/color";
+import SafeServiceScreen from "../components/SafeServiceScreen"
 export default function RootLayout() {
   const router = useRouter();
 
@@ -13,11 +14,11 @@ export default function RootLayout() {
   return (
     <ClerkProvider
       tokenCache={tokenCache}
-      publishableKey={`pk_test_dG91Z2gtcmF5LTU1LmNsZXJrLmFjY291bnRzLmRldiQ`}
+      publishableKey={`pk_test_bm90YWJsZS1pbXBhbGEtNzAuY2xlcmsuYWNjb3VudHMuZGV2JA`}
     >
-      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background  }}>
+      <SafeServiceScreen >
         <Slot />
-      </SafeAreaView>
+      </SafeServiceScreen>
     </ClerkProvider>
   );
 }

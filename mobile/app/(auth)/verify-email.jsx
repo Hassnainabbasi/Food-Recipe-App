@@ -18,47 +18,26 @@ export default function VerifyEmailScreen({ email, onBack }) {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const handleVerification = async () => {
-    setLoading(true);
-    try {
-      if (signUp.status === "complete") {
-        await setActive({ session: signUp.createdSessionId });
-        return;
-      }
 
+  const handleVerification = async () => {
+    console.log(code,"this is code")
+
+    if (!isLoaded) return;
+    setLoading(true);
+
+    try {
       const result = await signUp.attemptEmailAddressVerification({ code });
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
       } else {
-        Alert.alert("Error", "Verification failed");
+        Alert.alert("Error", "Verification failed. Please try again.");
+      console.error(JSON.stringify(result, null, 2));
       }
     } catch (err) {
-      const code = err?.errors?.[0]?.code;
-
-      if (code === "verification_already_verified") {
-        if (signUp.status === "complete") {
-          await setActive({ session: signUp.createdSessionId });
-          console.log("signUp.status:", signUp.status);
-          console.log("signUp.createdSessionId:", signUp.createdSessionId);
-
-          return;
-        } else {
-          Alert.alert(
-            "Already Verified",
-            "Email pehle se verify ho chuki hai. Try logging in."
-          );
-        }
-      } else {
-        console.error("SignUp error", err);
-        console.log("Full error object", JSON.stringify(err, null, 2));
-
-        Alert.alert(
-          "Error",
-          err?.errors?.[0]?.message || err?.message || "Failed to verify email"
-        );
-      }
-    } finally {
+      Alert.alert("Error", err.errors?.[0]?.message || "Verification failed");
+      console.error(JSON.stringify(err, null, 2));
+     } finally {
       setLoading(false);
     }
   };

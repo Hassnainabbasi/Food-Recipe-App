@@ -1,5 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
-import { COLORS } from "../../constants/colors";
+import { COLORS } from "../../constant/color";
 
 const { width } = Dimensions.get("window");
 const cardWidth = (width - 48) / 2;
@@ -114,7 +114,7 @@ export const homeStyles = StyleSheet.create({
   },
   row: {
     justifyContent: "space-between",
-    gap: 16,
+    paddingHorizontal: 16
   },
   emptyState: {
     alignItems: "center",

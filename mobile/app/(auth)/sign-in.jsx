@@ -27,6 +27,7 @@ export default function SignIn() {
   const handleSignIn = async () => {
     if (!email || !password) {
       Alert.alert(" Error", "Please enter both email and password");
+      return;
     }
     if (!isLoaded) return;
     setLoading(true);
@@ -74,7 +75,6 @@ export default function SignIn() {
                   placeholderTextColor={COLORS.textLight}
                   value={email}
                   onChangeText={setEmail}
-                  onChange={(e) => setEmail(e.target.value)}
                   autoCapitalize="none"
                   keyboardType="email-address"
                 />

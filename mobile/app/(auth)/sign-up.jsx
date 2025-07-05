@@ -91,7 +91,6 @@ export default function SignUp() {
                 placeholderTextColor={COLORS.textLight}
                 value={email}
                 onChangeText={setEmail}
-                onChange={(e) => setEmail(e.target.value)}
                 autoCapitalize="none"
                 keyboardType="email-address"
               />
