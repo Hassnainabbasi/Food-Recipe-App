@@ -7,7 +7,7 @@ import job from "./config/cron.js";
 import cors from "cors";
 import serverless from "serverless-http";
 
-const app = express();  
+const app = express();
 const PORT = 5001;
 
 app.use(cors());
@@ -82,6 +82,10 @@ app.post("/api/favorites", async (req, res) => {
     console.log(e.message);
     res.status(500).json({ error: "Something went wrong" });
   }
+});
+
+app.get("/", (req, res) => {
+  res.status(200).send("✅ API is live and working!");
 });
 
 export const handler = serverless(app);
