@@ -1,24 +1,14 @@
-// import cron from "cron";
-// import https from "https";
-
-// const job = new cron.CronJob("*/14 * * * *", function () {
-//   https
-//     .get(process.env.API_URL, (res) => {
-//       if (res.statusCode === 200) console.log("API is working");
-//       else console.log("API is not working", res.statusCode);
-//     })
-//     .on("error", (e) => console.log(" Got error: ", e));
-// });
-
-// export default job;
-
 import cron from "cron";
 import http from "http";
 import https from "https";
 import { URL } from "url";
 
 const job = new cron.CronJob("*/14 * * * *", function () {
-  const apiUrl = process.env.API_URL;
+  let apiUrl =
+    process.env.API_URL ||
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}/api/health`
+      : "http://localhost:5001/api/health");
 
   if (!apiUrl) {
     console.error("❌ API_URL is not defined.");
