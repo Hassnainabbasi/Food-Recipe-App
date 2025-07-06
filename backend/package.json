@@ -20,7 +20,8 @@
     "drizzle-orm": "^0.44.2",
     "express": "^5.1.0",
     "mongoose": "^8.16.1",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "serverless-http": "^3.2.0"
   },
   "devDependencies": {
     "drizzle-kit": "^0.31.1",

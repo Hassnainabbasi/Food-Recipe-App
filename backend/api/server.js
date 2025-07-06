@@ -5,8 +5,9 @@ import { and, eq } from "drizzle-orm";
 import { ENV } from "./config/env.js";
 import job from "./config/cron.js";
 import cors from "cors";
+import serverless from "serverless-http";
 
-const app = express();
+const app = express();  
 const PORT = 5001;
 
 app.use(cors());
@@ -83,7 +84,4 @@ app.post("/api/favorites", async (req, res) => {
   }
 });
 
-
-app.listen(PORT, () => {
-  console.log(`Server is running on Port ${PORT}`);
-});
+export const handler = serverless(app);
