@@ -4,9 +4,12 @@ import { favoritesTable } from "./db/schema.js";
 import { and, eq } from "drizzle-orm";
 import { ENV } from "./config/env.js";
 import job from "./config/cron.js";
+import cors from "cors";
 
 const app = express();
 const PORT = 5001;
+
+app.use(cors());
 
 app.use(express.json());
 
@@ -51,6 +54,7 @@ app.get("/api/favorites/:userId", async (req, res) => {
 app.post("/api/favorites", async (req, res) => {
   try {
     const { userId, recipeId, title, image, servings, cookTime } = req.body;
+
     if (!userId || !recipeId || !title || !image || !servings || !cookTime) {
       return res.status(400).json({ message: "Missing required fields" });
     }
@@ -66,12 +70,19 @@ app.post("/api/favorites", async (req, res) => {
         cookTime,
       })
       .returning();
+
     res.status(201).json(newFavorite[0]);
   } catch (e) {
+    if (e.message.includes("duplicate key") || e.message.includes("unique")) {
+      return res
+        .status(409)
+        .json({ error: "Recipe already favorited by this user" });
+    }
     console.log(e.message);
     res.status(500).json({ error: "Something went wrong" });
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on Port ${PORT}`);

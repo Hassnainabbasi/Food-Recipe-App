@@ -1,5 +1,5 @@
-import { StyleSheet, Dimensions } from "react-native";
-import { COLORS } from "../../constants/colors";
+import { Dimensions, StyleSheet } from "react-native";
+import { COLORS } from "../../constant/color";
 
 const { height } = Dimensions.get("window");
 
@@ -156,6 +156,14 @@ export const recipeDetailStyles = StyleSheet.create({
     color: COLORS.text,
     flex: 1,
   },
+  instructionTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: COLORS.text,
+    flex: 1,
+    marginTop: 32,
+    paddingHorizontal: 2
+  },
   countBadge: {
     backgroundColor: COLORS.primary + "20",
     paddingHorizontal: 10,
@@ -282,6 +290,7 @@ export const recipeDetailStyles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 4,
+    marginTop: 20
   },
   buttonGradient: {
     flexDirection: "row",

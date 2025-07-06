@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { COLORS } from "../../constants/colors";
+import { COLORS } from "../../constant/color";
 
 export const searchStyles = StyleSheet.create({
   container: {
@@ -16,7 +16,7 @@ export const searchStyles = StyleSheet.create({
     backgroundColor: COLORS.card,
     borderRadius: 16,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 8,
     borderWidth: 1,
     borderColor: COLORS.border,
     shadowColor: COLORS.shadow,
@@ -101,11 +101,12 @@ export const searchStyles = StyleSheet.create({
     alignItems: "center",
   },
   recipesGrid: {
-    gap: 16,
+    gap: 2,
     paddingBottom: 32,
   },
   row: {
     justifyContent: "space-between",
+    paddingHorizontal : 20,
   },
   emptyState: {
     flex: 1,

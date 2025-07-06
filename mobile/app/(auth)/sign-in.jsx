@@ -90,7 +90,10 @@ export default function SignIn() {
                   autoCapitalize="none"
                   secureTextEntry={!showpassword}
                 />
-                <TouchableOpacity style={authStyles.eyeButton}>
+                <TouchableOpacity
+                  style={authStyles.eyeButton}
+                  onPress={() => setShowPassword(!showpassword)}
+                >
                   <Ionicons
                     name={showpassword ? "eye-outline" : "eye-off-outline"}
                     size={20}
