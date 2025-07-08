@@ -1,5 +1,6 @@
 import { useClerk, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -10,23 +11,31 @@ import {
   View,
 } from "react-native";
 import { favoritesStyles } from "../../assets/styles/favorties.styles";
-import RecipeCard from "../../components/RecipeCard";
-import RecipeNotFound from "../../components/RecipeNotFound";
-import { ApiUrl } from "../../constant/api";
-import { COLORS } from "../../constant/color";
 import NoFavoritesFound from "../../components/FavoriteNotFound";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import RecipeCard from "../../components/RecipeCard";
+import { ApiUrl } from "../../constant/api";
+import { COLORS } from "../../constant/color";
 
 export default function FavoriteScreen() {
-  const { signOut } = useClerk();
+  const { signOut, isSignedIn } = useClerk();
   const { user } = useUser();
   const [favoritesRecipe, setFavoritesRecipe] = useState([]);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
+    if (!isSignedIn || !user) {
+      router.push("/(auth)/sign-in");
+    }
+  }, [isSignedIn, user]);
+
+  useEffect(() => {
+    if (!user) return;
+
     const loadFavorites = async () => {
       try {
-        const res = await fetch(`${ApiUrl}/favorites/${user.id}`);
+        const res = await fetch(`${ApiUrl}/favorites/${user?.id}`);
         if (!res.ok) throw new Error("Failed to load favorites");
         const data = await res.json();
 
@@ -43,13 +52,20 @@ export default function FavoriteScreen() {
       }
     };
     loadFavorites();
-  }, [user.id]);
+  }, [user?.id]);
 
   const handleSignOut = async () => {
-   Alert.alert("Logout", "Are you sure you want to logout?",[
-    { text: "Cancel", style:"cancel" },
-    { text: "Logout", style: "destructive", onPress: signOut }
-   ])
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => {
+          await AsyncStorage.removeItem("introSeen");
+          await signOut();
+        },
+      },
+    ]);
   };
 
   if (loading) return <LoadingSpinner />;
@@ -79,6 +95,6 @@ export default function FavoriteScreen() {
           />
         </View>
       </ScrollView>
-    </View> 
+    </View>
   );
 }

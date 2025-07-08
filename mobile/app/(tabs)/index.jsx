@@ -8,7 +8,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View,
+  View, 
 } from "react-native";
 import { homeStyles } from "../../assets/styles/homes.styles";
 import CategoriesFilterCard from "../../components/CategoriesFilterCard";
