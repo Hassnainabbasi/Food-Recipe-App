@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import { COLORS } from "../../constant/color";
 
 const { width } = Dimensions.get("window");
@@ -11,6 +11,70 @@ export const homeStyles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 32,
+  },
+  closeButtonContainer: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    zIndex: 999,
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    padding: 6,
+    elevation: 5,
+  },
+
+  Ionicons: {
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    position: "relative",
+    color: "black",
+  },
+  modalOverlay: {
+    flex: 2,
+    backgroundColor: "rgba(0,0,0,0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  modalContent: {
+    borderRadius: 12,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+  },
+  modalButton: {
+    paddingVertical: 12,
+    alignItems: "center",
+    opacity: 0.9,
+  },
+  modalButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: COLORS.white,
+  },
+  menuItem: {
+    opacity: 0.8,
+  },
+  menuText: {
+    fontSize: 16,
+    color: COLORS.white,
+    fontWeight: "500",
+  },
+
+  dropdownMenu: {
+    position: "absolute",
+    top: 40,
+    left: 10,
+    backgroundColor: COLORS.background,
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    opacity: 0.9,
+    // zIndex: 999,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   welcomeSection: {
     paddingHorizontal: 20,
@@ -114,7 +178,7 @@ export const homeStyles = StyleSheet.create({
   },
   row: {
     justifyContent: "space-between",
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   emptyState: {
     alignItems: "center",

@@ -8,6 +8,7 @@ export default function RootLayout() {
     <ClerkProvider
       publishableKey="pk_test_bm90YWJsZS1pbXBhbGEtNzAuY2xlcmsuYWNjb3VudHMuZGV2JA"
       tokenCache={tokenCache}
+      navigate={() => {}}
     >
       <SafeServiceScreen>
         <Slot />

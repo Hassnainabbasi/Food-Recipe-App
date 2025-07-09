@@ -1,5 +1,6 @@
 import { useClerk, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -26,7 +27,7 @@ export default function FavoriteScreen() {
 
   useEffect(() => {
     if (!isSignedIn || !user) {
-      router.push("/(auth)/sign-in");
+      router.replace("/(auth)/sign-in");
     }
   }, [isSignedIn, user]);
 
@@ -61,8 +62,18 @@ export default function FavoriteScreen() {
         text: "Logout",
         style: "destructive",
         onPress: async () => {
-          await AsyncStorage.removeItem("introSeen");
-          await signOut();
+          try {
+            console.log("⏳ Signing out...");
+            await AsyncStorage.removeItem("introSeen");
+
+            await signOut();
+
+            console.log("✅ Sign out successful");
+
+            router.replace("/(auth)/sign-in");
+          } catch (error) {
+            console.error("❌ Error during sign out:", error);
+          }
         },
       },
     ]);

@@ -1,6 +1,6 @@
 import express from "express";
 import { db } from "../config/db.js";
-import { favoritesTable } from "../db/schema.js";
+import { favoritesTable, recipesTable } from "../db/schema.js";
 import { and, eq } from "drizzle-orm";
 import { ENV } from "../config/env.js";
 import cors from "cors";
@@ -77,6 +77,47 @@ app.post("/api/favorites", async (req, res) => {
     }
     console.log(e.message);
     res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+app.post("/api/recipe", async (req, res) => {
+  try {
+    const {
+      userId,
+      title,
+      image,
+      servings,
+      cookTime,
+      ingredients,
+      instructions,
+      description,
+    } = await req.json();
+
+    if (!userId || !title || !image || !servings || !cookTime || !ingredients) {
+      return res.json(
+        { message: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const inserted = await db.insert(recipesTable).values({
+      userId,
+      title,
+      image,
+      servings,
+      cookTime,
+      ingredients,
+      instructions,
+      description,
+    });
+
+    return res.json(inserted[0], { status: 201 });
+  } catch (error) {
+    console.log(error);
+    return res.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
   }
 });
 

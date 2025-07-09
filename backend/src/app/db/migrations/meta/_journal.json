@@ -8,6 +8,27 @@
       "when": 1751407621715,
       "tag": "0000_milky_manta",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1751984303934,
+      "tag": "0001_ancient_jackpot",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1751984534542,
+      "tag": "0002_worthless_johnny_blaze",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752018484138,
+      "tag": "0003_thin_omega_sentinel",
+      "breakpoints": true
     }
   ]
 }

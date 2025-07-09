@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { authStyles } from "../../assets/styles/auth.styles";
 import { COLORS } from "../../constant/color";
+import { ADMIN_EMAIL } from "../../constant/constant";
 
 export default function SignIn() {
   const router = useRouter();
@@ -24,31 +25,74 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // const handleSignIn = async () => {
+  //   if (!email || !password) {
+  //     Alert.alert(" Error", "Please enter both email and password");
+  //     return;
+  //   }
+  //   if (!isLoaded) return;
+  //   setLoading(true);
+
+  //   try {
+  //     const signInAttempt = await signIn.create({
+  //       identifier: email,
+  //       password,
+  //     });
+  //     if (signInAttempt.status === "complete") {
+  //       await setActive({ session: signInAttempt.createdSessionId });
+  //       if (email === ADMIN_EMAIL) {
+  //         router.replace("/(admin)/");
+  //       } else {
+  //         router.replace("/(tabs)/");
+  //       }
+  //     } else {
+  //       Alert.alert("Error", "Invalid email or password");
+  //       console.error(JSON.stringify(signInAttempt, null, 2));
+  //     }
+  //   } catch (e) {
+  //     console.log(e.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleSignIn = async () => {
     if (!email || !password) {
-      Alert.alert(" Error", "Please enter both email and password");
+      Alert.alert("Error", "Please enter both email and password");
       return;
     }
     if (!isLoaded) return;
-    setLoading(true);
 
+    setLoading(true);
     try {
       const signInAttempt = await signIn.create({
         identifier: email,
         password,
       });
+
+      console.log("SignIn Attempt:", JSON.stringify(signInAttempt, null, 2));
+
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
+
+        if (email === ADMIN_EMAIL && password === "@Sing1412") {
+          router.replace("/(admin)/");
+        } else {
+          router.replace("/(tabs)/");
+        }
       } else {
         Alert.alert("Error", "Invalid email or password");
-        console.error(JSON.stringify(signInAttempt, null, 2));
       }
     } catch (e) {
-      console.log(e.message);
+      console.error("Sign-in error", e);
+      Alert.alert(
+        "Sign In Error",
+        e?.errors?.[0]?.message || e.message || "Unknown error"
+      );
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <View style={authStyles.container}>
       <KeyboardAvoidingView

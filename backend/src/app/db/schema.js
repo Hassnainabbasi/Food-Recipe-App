@@ -1,3 +1,4 @@
+import { json } from "drizzle-orm/gel-core";
 import {
   pgTable,
   serial,
@@ -5,6 +6,7 @@ import {
   timestamp,
   integer,
   unique,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 export const favoritesTable = pgTable(
@@ -25,3 +27,18 @@ export const favoritesTable = pgTable(
     };
   }
 );
+
+export const recipesTable = pgTable("recipes", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description"),
+  image: text("image"),
+  ingredients: jsonb("ingredients").notNull(),
+  instructions: text("instructions"),
+  servings: text("servings"),
+  cookTime: text("cook_time"),
+  createdAt: timestamp("created_at").defaultNow(),
+  userId: text("user_id").notNull(),
+  category: text("category").notNull(),
+  status: text("status").default("pending").notNull(),
+});

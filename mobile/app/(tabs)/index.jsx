@@ -1,19 +1,22 @@
+import { useClerk, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   FlatList,
+  Modal,
   RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
-  View, 
+  View,
 } from "react-native";
 import { homeStyles } from "../../assets/styles/homes.styles";
 import CategoriesFilterCard from "../../components/CategoriesFilterCard";
 import RecipeCard from "../../components/RecipeCard";
 import { COLORS } from "../../constant/color";
+import { ADMIN_EMAIL } from "../../constant/constant";
 import { MealApi } from "../../services/mealApi";
 
 const HomeScreen = () => {
@@ -24,6 +27,10 @@ const HomeScreen = () => {
   const [featureRecipe, setFeatureRecipe] = useState(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isSignedIn, signOut } = useClerk();
+  const { user, isLoaded } = useUser();
 
   const loadData = async () => {
     try {
@@ -77,6 +84,13 @@ const HomeScreen = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (isLoaded && user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL) {
+      router.replace("/(admin)/");
+    }
+  }, [isLoaded, user]);
+
   return (
     <View style={homeStyles.container}>
       <ScrollView
@@ -87,19 +101,58 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={homeStyles.welcomeSection}>
-          <Image
-            source={require("../../assets/images/lamb.png")}
-            style={{ width: 100, height: 100 }}
-          />
-          <Image
-            source={require("../../assets/images/chicken.png")}
-            style={{ width: 100, height: 100 }}
-          />
-          <Image
-            source={require("../../assets/images/cow.png")}
-            style={{ width: 100, height: 100 }}
-          />
+          {menuVisible ? (
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={menuVisible}
+            >
+              <TouchableOpacity
+                activeOpacity={1}
+                style={homeStyles.modalOverlay}
+              >
+                <TouchableOpacity
+                  style={homeStyles.closeButtonContainer}
+                  onPress={() => setMenuVisible(false)}
+                >
+                  <Ionicons name="close" size={24} color={COLORS.text} />
+                </TouchableOpacity>
+                <View style={homeStyles.modalContent}>
+                  <TouchableOpacity
+                    style={homeStyles.modalButton}
+                    onPress={() => {
+                      setMenuVisible(false);
+                      router.push("/createrecipe");
+                    }}
+                  >
+                    <Text style={homeStyles.modalButtonText}>Add Recipe</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={homeStyles.modalButton}
+                    onPress={() => {
+                      setMenuVisible(false);
+                      if (isSignedIn) {
+                        signOut();
+                      } else {
+                        router.push("/(auth)/sign-in");
+                      }
+                    }}
+                  >
+                    <Text style={homeStyles.modalButtonText}>
+                      {isSignedIn ? "Logout" : "Login"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </Modal>
+          ) : (
+            <TouchableOpacity onPress={() => setMenuVisible(!menuVisible)}>
+              <Ionicons name="menu" size={32} color={COLORS.text} />
+            </TouchableOpacity>
+          )}
         </View>
+
         {featureRecipe && (
           <View style={homeStyles.featuredSection}>
             <TouchableOpacity
