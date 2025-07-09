@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet } from "react-native";
-import { COLORS } from "../../constant/color";
+import { COLORS, THEMES } from "../../constant/color";
 
 const { height } = Dimensions.get("window");
 
@@ -10,6 +10,10 @@ export const authStyles = StyleSheet.create({
   },
   keyboardView: {
     flex: 1,
+  },
+  adminContainer: {
+    flex: 1,
+    backgroundColor: THEMES.midnight,
   },
   scrollContent: {
     flexGrow: 1,

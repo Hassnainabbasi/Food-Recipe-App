@@ -266,15 +266,6 @@ export default function CreateRecipeScreen() {
                   {loading ? "Loading..." : "Create"}
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={authStyles.linkContainer}
-                onPress={() => router.push("/(auth)/sign-up")}
-              >
-                <Text style={authStyles.linkText}>
-                  Don't have an account?
-                  <Text style={authStyles.link}> Sign Up</Text>
-                </Text>
-              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>

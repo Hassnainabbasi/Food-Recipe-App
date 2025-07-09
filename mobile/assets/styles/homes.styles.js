@@ -3,6 +3,7 @@ import { COLORS } from "../../constant/color";
 
 const { width } = Dimensions.get("window");
 const cardWidth = (width - 48) / 2;
+const adminCardWidth = (width - 100) / 0.8;
 
 export const homeStyles = StyleSheet.create({
   container: {
@@ -11,6 +12,27 @@ export const homeStyles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 32,
+  },
+
+  modalOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "flex-end",
+    zIndex: 1000,
+  },
+
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    height: 250, // or as needed
+    width: "80%",
+    alignSelf: "center",
+    position: "relative",
   },
   closeButtonContainer: {
     position: "absolute",
@@ -30,17 +52,26 @@ export const homeStyles = StyleSheet.create({
     color: "black",
   },
   modalOverlay: {
-    flex: 2,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: "rgba(0,0,0,0.8)",
     justifyContent: "center",
     alignItems: "center",
-    width: "100%",
+    zIndex: 1000,
   },
+
   modalContent: {
-    borderRadius: 12,
-    paddingVertical: 20,
-    paddingHorizontal: 16,
+    // backgroundColor: "black",
+    borderRadius: 10,
+    padding: 20,
+    width: "100%",
+    height: "100%",
+    position: "relative",
   },
+
   modalButton: {
     paddingVertical: 12,
     alignItems: "center",
@@ -176,6 +207,9 @@ export const homeStyles = StyleSheet.create({
   recipesGrid: {
     gap: 16,
   },
+  adminrecipesGrid: {
+    paddingHorizontal: 16,
+  },
   row: {
     justifyContent: "space-between",
     paddingHorizontal: 16,
@@ -254,7 +288,7 @@ export const homeStyles = StyleSheet.create({
 export const recipeCardStyles = StyleSheet.create({
   container: {
     width: cardWidth,
-    backgroundColor: COLORS.card,
+    // backgroundColor: COLORS.card,
     borderRadius: 16,
     marginBottom: 16,
     shadowColor: COLORS.shadow,
@@ -266,25 +300,55 @@ export const recipeCardStyles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
     overflow: "hidden",
+    position: "relative",
+  },
+  adminContainer: {
+    width: "100%",
+    // backgroundColor: COLORS.card,
+    borderRadius: 16,
+    marginBottom: 16,
+    shadowColor: COLORS.shadow,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    overflow: "hidden",
+    position: "relative",
   },
   imageContainer: {
     position: "relative",
-    height: 140,
+    height: 180,
+    width: "100%",
   },
   image: {
     width: "100%",
     height: "100%",
-    backgroundColor: COLORS.border,
   },
   content: {
-    padding: 12,
+    display: "flex",
+    alignSelf: "center",
+  },
+  imageOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    zIndex: 1,
+  },
+  overlayTextContainer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 2,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingHorizontal: 10,
   },
   title: {
     fontSize: 15,
     fontWeight: "700",
-    color: COLORS.text,
+    color: COLORS.white,
     marginBottom: 4,
-    lineHeight: 20,
+    // lineHeight: 20,
   },
   description: {
     fontSize: 12,

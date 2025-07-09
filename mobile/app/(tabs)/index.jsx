@@ -28,7 +28,6 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { isSignedIn, signOut } = useClerk();
   const { user, isLoaded } = useUser();
 
@@ -158,11 +157,11 @@ const HomeScreen = () => {
             <TouchableOpacity
               style={homeStyles.featuredCard}
               activeOpacity={0.9}
-              onPress={() => router.push(`/recipe/${featureRecipe.id}`)}
+              onPress={() => router.push(`/recipe/${featureRecipe?.id}`)}
             >
               <View style={homeStyles.featuredImageContainer}>
                 <Image
-                  source={{ uri: featureRecipe.image }}
+                  source={{ uri: featureRecipe?.image }}
                   style={homeStyles.featuredImage}
                   contentFit="cover"
                   transition={500}
@@ -173,7 +172,7 @@ const HomeScreen = () => {
                   </View>
                   <View style={homeStyles.featuredContent}>
                     <Text style={homeStyles.featuredTitle}>
-                      {featureRecipe.title}
+                      {featureRecipe?.title}
                     </Text>
                     <View style={homeStyles.featuredMeta}>
                       <View style={homeStyles.metaItem}>
@@ -183,7 +182,7 @@ const HomeScreen = () => {
                           color={COLORS.white}
                         />
                         <Text style={homeStyles.metaText}>
-                          {featureRecipe.cookTime}
+                          {featureRecipe?.cookTime}
                         </Text>
                       </View>
                       <View style={homeStyles.metaItem}>
@@ -193,10 +192,10 @@ const HomeScreen = () => {
                           color={COLORS.white}
                         />
                         <Text style={homeStyles.metaText}>
-                          {featureRecipe.servings}
+                          {featureRecipe?.servings}
                         </Text>
                       </View>
-                      {featureRecipe.area && (
+                      {featureRecipe?.area && (
                         <View style={homeStyles.metaItem}>
                           <Ionicons
                             name="location-outline"
@@ -204,7 +203,7 @@ const HomeScreen = () => {
                             color={COLORS.white}
                           />
                           <Text style={homeStyles.metaText}>
-                            {featureRecipe.area}
+                            {featureRecipe?.area}
                           </Text>
                         </View>
                       )}
@@ -231,7 +230,7 @@ const HomeScreen = () => {
           <FlatList
             data={recipes}
             renderItem={({ item }) => <RecipeCard recipe={item} />}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item?.id?.toString()}
             numColumns={2}
             columnWrapperStyle={homeStyles.row}
             contentContainerStyle={homeStyles.recipesGrid}

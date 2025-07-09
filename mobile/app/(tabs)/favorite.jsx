@@ -99,7 +99,7 @@ export default function FavoriteScreen() {
             renderItem={({ item }) => <RecipeCard recipe={item} />}
             numColumns={2}
             columnWrapperStyle={favoritesStyles.row}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item?.id?.toString()}
             contentContainerStyle={favoritesStyles.recipesGrid}
             ListEmptyComponent={<NoFavoritesFound />}
             scrollEnabled={false}

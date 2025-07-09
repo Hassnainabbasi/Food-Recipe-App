@@ -132,7 +132,7 @@ export default function SearchScreen() {
           renderItem={({ item }) => <RecipeCard recipe={item} />}
           numColumns={2}
           columnWrapperStyle={searchStyles.row}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item?.id?.toString()}
           style={searchStyles.recipesGrid}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={<RecipeNotFound />} 
