@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   FlatList,
   Modal,
@@ -12,14 +13,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 import { homeStyles } from "../../assets/styles/homes.styles";
 import CategoriesFilterCard from "../../components/CategoriesFilterCard";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import RecipeCard from "../../components/RecipeCard";
 import { COLORS } from "../../constant/color";
 import { ADMIN_EMAIL } from "../../constant/constant";
 import { MealApi } from "../../services/mealApi";
 
 const HomeScreen = () => {
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const [selectCategory, setSelectCategory] = useState(null);
   const [recipes, setRecipes] = useState([]);
@@ -40,12 +44,13 @@ const HomeScreen = () => {
         MealApi.getRandomMeal(),
       ]);
 
-      const transformCategpories = apiCategories.map((cat, index) => ({
-        id: index + 1,
-        name: cat.strCategory,
-        image: cat.strCategoryThumb,
-        description: cat.strCategoryDescription,
-      }));
+      const transformCategpories = apiCategories.map((cat, index) => {
+        return {
+          id: index + 1,
+          name: cat.category,
+          image: cat.image,
+        };
+      });
 
       setCategories(transformCategpories);
 
@@ -54,11 +59,15 @@ const HomeScreen = () => {
         .filter((meal) => meal !== null);
 
       setRecipes(transformMeals);
+      // console.log(transformMeals,'transform Meals')
 
       const transformedFeatured = MealApi.transformMealData(feauturedMeal);
       setFeatureRecipe(transformedFeatured);
+      // console.log(transformedFeatured,'transform Featured')
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,9 +78,12 @@ const HomeScreen = () => {
         .map((meal) => MealApi.transformMealData(meal))
         .filter((meal) => meal !== null);
       setRecipes(transform);
+      console.log(transform, "transform");
     } catch (error) {
       console.error(error);
       setRecipes([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,6 +101,8 @@ const HomeScreen = () => {
       router.replace("/(admin)/");
     }
   }, [isLoaded, user]);
+
+  if (loading) return <LoadingSpinner />;
 
   return (
     <View style={homeStyles.container}>
@@ -124,7 +138,9 @@ const HomeScreen = () => {
                       router.push("/createrecipe");
                     }}
                   >
-                    <Text style={homeStyles.modalButtonText}>Add Recipe</Text>
+                    <Text style={homeStyles.modalButtonText}>
+                      {t("Add Recipe")}
+                    </Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -139,7 +155,7 @@ const HomeScreen = () => {
                     }}
                   >
                     <Text style={homeStyles.modalButtonText}>
-                      {isSignedIn ? "Logout" : "Login"}
+                      {isSignedIn ? t("logout") : t("login")}
                     </Text>
                   </TouchableOpacity>
                 </View>

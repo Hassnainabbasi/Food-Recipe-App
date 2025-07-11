@@ -16,6 +16,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import { authStyles } from "../../assets/styles/auth.styles";
 import { ApiUrl } from "../../constant/api";
 import { COLORS } from "../../constant/color";
+import { BASE_URL, WEB_URL } from "../../services/mealApi";
 
 export default function CreateRecipeScreen() {
   const router = useRouter();
@@ -30,7 +31,8 @@ export default function CreateRecipeScreen() {
 
   const [loading, setLoading] = useState(false);
   const { user } = useUser();
-  const userId = user.id;
+  // console.log(user,'user',user?.id,'userId')
+  const userId = user?.id;
   const { isSignedIn } = useClerk();
 
   const updateIngredient = (text, index) => {
@@ -49,24 +51,28 @@ export default function CreateRecipeScreen() {
   }, [isSignedIn, user]);
 
   const categoryOptions = [
-    { label: "Breakfast", value: "breakfast" },
-    { label: "Lunch", value: "lunch" },
-    { label: "Dinner", value: "dinner" },
-    { label: "Dessert", value: "dessert" },
+    { label: "Chicken Recipes", value: "chicken" },
+    { label: "Beef / Mutton Recipes", value: "beef" },
+    { label: "Vegetarian Recipes", value: "vegetarian" },
+    { label: "Rice Dishes", value: "rice" },
+    { label: "Snacks & Street Food", value: "street_food" },
+    { label: "Breakfast Recipes", value: "breakfast" },
+    { label: "Fast Food", value: "fast food" },
+    { label: "BBQ & Grilled", value: "bbq" },
+    { label: "Desserts & Sweets", value: "desserts" },
+    { label: "Baking", value: "baking" },
+    { label: "Curries / Gravies", value: "curries" },
+    { label: "Ramzan Specials", value: "ramzan" },
   ];
 
   const handleSignIn = async () => {
-    let imageUrl = [];
-    if (image) {
+    let imageUrl = "";
+    if (image.startsWith("data:image")) {
       const formData = new FormData();
-      formData.append("file", {
-        uri: image,
-        type: "image/jpeg",
-        name: "upload.jpg",
-      });
+      formData.append("file", image);
       formData.append("upload_preset", "Food Recipe");
       formData.append("cloud_name", "djmfadch8");
-
+      console.log("formData", formData);
       try {
         const res = await fetch(
           "https://api.cloudinary.com/v1_1/djmfadch8/image/upload",
@@ -78,11 +84,12 @@ export default function CreateRecipeScreen() {
 
         if (!res.ok) {
           const error = await res.json();
-          console.error("Error uploading image:", error);
+          console.error("Error uploading image:", error.message);
           return;
         }
 
         const imageData = await res.json();
+        console.log("imageData", imageData);
         imageUrl = imageData.secure_url;
         console.log(imageUrl);
       } catch (error) {
@@ -103,7 +110,7 @@ export default function CreateRecipeScreen() {
     };
 
     try {
-      const response = await fetch(`${ApiUrl}/recipe`, {
+      const response = await fetch(`${WEB_URL}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -125,9 +132,9 @@ export default function CreateRecipeScreen() {
       allowsEditing: true,
       quality: 1,
     });
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      console.log("image", result.assets[0].uri);
     }
   };
 

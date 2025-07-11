@@ -1,4 +1,5 @@
-const BASE_URL = "http://192.168.0.106:3000/api/recipe";
+export const BASE_URL = "http://192.168.0.106:3000/api/recipe";
+export const WEB_URL = "http://localhost:3000/api/recipe";
 
 export const MealApi = {
   // searchMealsByName: async (query) => {
@@ -82,7 +83,7 @@ export const MealApi = {
   searchMealsByName: async (query) => {
     try {
       const res = await fetch(
-        `${BASE_URL}/search.php?s=${encodeURIComponent(query)}`
+        `${BASE_URL || WEB_URL}/search.php?s=${encodeURIComponent(query)}`
       );
       const data = await res.json();
       return data.meals || [];
@@ -94,7 +95,7 @@ export const MealApi = {
 
   getMealById: async (id) => {
     try {
-      const res = await fetch(`${BASE_URL}/lookup.php?i=${id}`);
+      const res = await fetch(`${BASE_URL || WEB_URL}/lookup.php?i=${id}`);
       const data = await res.json();
       return data.meals ? data.meals[0] : null;
     } catch (e) {
@@ -105,7 +106,7 @@ export const MealApi = {
 
   getRandomMeal: async () => {
     try {
-      const res = await fetch(`${BASE_URL}/random.php`);
+      const res = await fetch(`${BASE_URL || WEB_URL}/random.php`);
       const data = await res.json();
       return data.meals ? data.meals[0] : null;
     } catch (e) {
@@ -129,7 +130,7 @@ export const MealApi = {
 
   getCategories: async () => {
     try {
-      const res = await fetch(`${BASE_URL}/categories.php`);
+      const res = await fetch(`${BASE_URL || WEB_URL}/categories.php`);
       const data = await res.json();
       return data.categories || [];
     } catch (e) {
@@ -141,7 +142,7 @@ export const MealApi = {
   filterByIngredient: async (ingredient) => {
     try {
       const res = await fetch(
-        `${BASE_URL}/filter.php?i=${encodeURIComponent(ingredient)}`
+        `${BASE_URL || WEB_URL}/filter.php?i=${encodeURIComponent(ingredient)}`
       );
       const data = await res.json();
       return data.meals || [];
@@ -154,9 +155,10 @@ export const MealApi = {
   filterByCategory: async (category) => {
     try {
       const res = await fetch(
-        `${BASE_URL}/filter.php?c=${encodeURIComponent(category)}`
+        `${BASE_URL || WEB_URL}/filter.php?c=${encodeURIComponent(category)}`
       );
       const data = await res.json();
+      console.log(data.meals[0], "konsi category");
       return data.meals || [];
     } catch (e) {
       console.log("filterByCategory error:", e);
@@ -167,7 +169,7 @@ export const MealApi = {
     if (!meal) return null;
     const ingredients = [];
     for (let i = 1; i <= 20; i++) {
-      const ingredient = meal[`strIngredient${i}`];
+      const ingredient = meal[`ingredient${i}`];
       const measure = meal[`strMeasure${i}`];
       if (ingredient && ingredient.trim()) {
         const measureText =
@@ -175,24 +177,23 @@ export const MealApi = {
         ingredients.push(`${measureText}${ingredient.trim()}`);
       }
     }
-    const instructions = meal.strInstructions
-      ? meal.strInstructions.split(/\r?\n/).filter((step) => step.trim())
+    const instructions = meal.instructions
+      ? meal.instructions.split(/\r?\n/).filter((step) => step.trim())
       : [];
 
     return {
-      id: meal.idMeal,
-      title: meal.strMeal,
-      description: meal.strInstructions
-        ? meal.strInstructions.substring(0, 120) + "..."
-        : "Delicious meal from TheMealDB",
-      image: meal.strMealThumb,
-      cookTime: "30 minutes",
-      servings: 4,
-      category: meal.strCategory || "Main Course",
-      area: meal.strArea,
-      ingredients,
-      instructions,
+      id: meal.id,
+      title: meal.title,
+      description: meal.description
+        ? meal.description.substring(0, 120) + "..."
+        : "Delicious meal from Recipe",
+      image: meal.image,
+      cookTime: meal.cookTime,
+      servings: meal.servings,
+      category: meal.categories,
+      area: meal.ingredients,
       originalData: meal,
+      instructions: meal.instructions,
     };
   },
 };

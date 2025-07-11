@@ -18,7 +18,17 @@ export async function GET(req) {
       .where(eq(recipesTable.id, parseInt(id)))
       .limit(1);
 
-    return NextResponse.json({ meals: result }, { status: 200 });
+    return NextResponse.json(
+      { meals: result },
+      {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+        },
+      }
+    );
   } catch (error) {
     console.error("Lookup error:", error);
     return NextResponse.json(

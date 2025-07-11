@@ -19,7 +19,14 @@ export async function GET(req) {
       recipes = await db.select().from(recipesTable);
     }
 
-    return NextResponse.json(recipes, { status: 200 });
+    return NextResponse.json(recipes, {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
   } catch (error) {
     console.log(error);
     return NextResponse.json(

@@ -28,7 +28,17 @@ export async function GET(req) {
       );
     }
 
-    return NextResponse.json({ meals: results }, { status: 200 });
+    return NextResponse.json(
+      { meals: results },
+      {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+        },
+      }
+    );
   } catch (error) {
     console.error("Filter error:", error);
     return NextResponse.json(

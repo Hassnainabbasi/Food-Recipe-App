@@ -20,7 +20,17 @@ export async function GET(req) {
       .from(recipesTable)
       .where(ilike(recipesTable.title, `%${searchQuery}%`));
 
-    return NextResponse.json({ meals: results }, { status: 200 });
+    return NextResponse.json(
+      { meals: results },
+      {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+        },
+      }
+    );
   } catch (error) {
     console.error("Search error:", error);
     return NextResponse.json(
