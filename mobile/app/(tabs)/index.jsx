@@ -22,8 +22,21 @@ import { COLORS } from "../../constant/color";
 import { ADMIN_EMAIL } from "../../constant/constant";
 import { MealApi } from "../../services/mealApi";
 
+const getLocalized = (obj, key, lang) => {
+  if (!obj) return "";
+
+  const localizedObj = obj[`${key}_json`];
+
+  if (localizedObj && typeof localizedObj === "object") {
+    return localizedObj[lang] ?? obj[key];
+  }
+
+  return lang === "ur" ? obj[`${key}_ur`] ?? obj[key] : obj[key];
+};
+
 const HomeScreen = () => {
   const { t, i18n } = useTranslation();
+  const lang = i18n.language;
   const router = useRouter();
   const [selectCategory, setSelectCategory] = useState(null);
   const [recipes, setRecipes] = useState([]);
@@ -44,26 +57,27 @@ const HomeScreen = () => {
         MealApi.getRandomMeal(),
       ]);
 
+
       const transformCategpories = apiCategories.map((cat, index) => {
         return {
           id: index + 1,
           name: cat.category,
           image: cat.image,
+          category_json: cat.category_json,
         };
       });
 
       setCategories(transformCategpories);
+      console.log(transformCategpories, "transform Category");
 
       const transformMeals = randomMeals
         .map((meal) => MealApi.transformMealData(meal))
         .filter((meal) => meal !== null);
 
       setRecipes(transformMeals);
-      // console.log(transformMeals,'transform Meals')
 
       const transformedFeatured = MealApi.transformMealData(feauturedMeal);
       setFeatureRecipe(transformedFeatured);
-      // console.log(transformedFeatured,'transform Featured')
     } catch (error) {
       console.error(error);
     } finally {
@@ -166,6 +180,16 @@ const HomeScreen = () => {
               <Ionicons name="menu" size={32} color={COLORS.text} />
             </TouchableOpacity>
           )}
+          <TouchableOpacity
+            onPress={() =>
+              i18n.changeLanguage(i18n.language === "en" ? "ur" : "en")
+            }
+            style={{ marginLeft: 10 }}
+          >
+            <Text style={{ color: COLORS.text }}>
+              {i18n.language === "en" ? "اردو" : "English"}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {featureRecipe && (
@@ -184,11 +208,13 @@ const HomeScreen = () => {
                 />
                 <View style={homeStyles.featuredOverlay}>
                   <View style={homeStyles.featuredBadge}>
-                    <Text style={homeStyles.featuredBadgeText}>Feature</Text>
+                    <Text style={homeStyles.featuredBadgeText}>
+                      {t("feature")}
+                    </Text>
                   </View>
                   <View style={homeStyles.featuredContent}>
                     <Text style={homeStyles.featuredTitle}>
-                      {featureRecipe?.title}
+                      {getLocalized(featureRecipe, "title", lang)}
                     </Text>
                     <View style={homeStyles.featuredMeta}>
                       <View style={homeStyles.metaItem}>
@@ -211,18 +237,6 @@ const HomeScreen = () => {
                           {featureRecipe?.servings}
                         </Text>
                       </View>
-                      {featureRecipe?.area && (
-                        <View style={homeStyles.metaItem}>
-                          <Ionicons
-                            name="location-outline"
-                            size={16}
-                            color={COLORS.white}
-                          />
-                          <Text style={homeStyles.metaText}>
-                            {featureRecipe?.area}
-                          </Text>
-                        </View>
-                      )}
                     </View>
                   </View>
                 </View>
@@ -232,6 +246,8 @@ const HomeScreen = () => {
         )}
         {categories.length > 0 && (
           <CategoriesFilterCard
+            getLocalized={getLocalized}
+            lang={lang}
             categories={categories}
             selectCategory={selectCategory}
             onSelectCategory={handleCategorySelect}
@@ -245,7 +261,13 @@ const HomeScreen = () => {
         {recipes.length > 0 ? (
           <FlatList
             data={recipes}
-            renderItem={({ item }) => <RecipeCard recipe={item} />}
+            renderItem={({ item }) => (
+              <RecipeCard
+                recipe={item}
+                getLocalized={getLocalized}
+                lang={lang}
+              />
+            )}
             keyExtractor={(item) => item?.id?.toString()}
             numColumns={2}
             columnWrapperStyle={homeStyles.row}
@@ -272,9 +294,9 @@ const HomeScreen = () => {
               size={64}
               color={COLORS.textLight}
             />
-            <Text style={homeStyles.emptyTitle}>No Recipes Found</Text>
+            <Text style={homeStyles.emptyTitle}>{t("noRecipes")}</Text>
             <Text style={homeStyles.emptyDescription}>
-              Try a different category
+              {t("tryDifferentCategory")}
             </Text>
           </View>
         )}

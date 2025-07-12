@@ -31,14 +31,18 @@ export const favoritesTable = pgTable(
 export const recipesTable = pgTable("recipes", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
+  title_json: jsonb("title_json"),
   description: text("description"),
+  description_json: jsonb("description_json"),
   image: text("image"),
   ingredients: jsonb("ingredients").notNull(),
+  instructions_json: jsonb("instructions_json"),
   instructions: text("instructions"),
   servings: text("servings"),
   cookTime: text("cook_time"),
   createdAt: timestamp("created_at").defaultNow(),
   userId: text("user_id").notNull(),
   category: text("category").notNull(),
+  category_json: jsonb("category_json"),
   status: text("status").default("pending").notNull(),
 });

@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   FlatList,
   Text,
@@ -8,18 +9,32 @@ import {
   View,
 } from "react-native";
 import { searchStyles } from "../../assets/styles/search.styles";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import RecipeCard from "../../components/RecipeCard";
 import RecipeNotFound from "../../components/RecipeNotFound";
 import { COLORS } from "../../constant/color";
 import useDebounce from "../../hooks/useDebounce";
 import { MealApi } from "../../services/mealApi";
-import LoadingSpinner from "../../components/LoadingSpinner";
+
+const getLocalized = (obj, key, lang) => {
+  if (!obj) return "";
+
+  const localizedObj = obj[`${key}_json`];
+
+  if (localizedObj && typeof localizedObj === "object") {
+    return localizedObj[lang] ?? obj[key];
+  }
+
+  return lang === "ur" ? obj[`${key}_ur`] ?? obj[key] : obj[key];
+};
 
 export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -129,13 +144,15 @@ export default function SearchScreen() {
       ) : (
         <FlatList
           data={recipes}
-          renderItem={({ item }) => <RecipeCard recipe={item} />}
+          renderItem={({ item }) => (
+            <RecipeCard lang={lang} getLocalized={getLocalized} recipe={item} />
+          )}
           numColumns={2}
           columnWrapperStyle={searchStyles.row}
           keyExtractor={(item) => item?.id?.toString()}
           style={searchStyles.recipesGrid}
           showsVerticalScrollIndicator={false}
-          ListEmptyComponent={<RecipeNotFound />} 
+          ListEmptyComponent={<RecipeNotFound />}
         />
       )}
     </View>

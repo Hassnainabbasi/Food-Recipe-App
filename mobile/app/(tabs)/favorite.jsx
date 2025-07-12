@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Alert,
   FlatList,
@@ -15,8 +16,13 @@ import { favoritesStyles } from "../../assets/styles/favorties.styles";
 import NoFavoritesFound from "../../components/FavoriteNotFound";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import RecipeCard from "../../components/RecipeCard";
-import { ApiUrl } from "../../constant/api";
 import { COLORS } from "../../constant/color";
+import { Fav_URL } from "../../services/mealApi";
+
+export const getLocalized = (obj, key, lang = "en") => {
+  if (!obj || !obj[`${key}_json`]) return obj[key] || "";
+  return obj[`${key}_json`][lang] || obj[key];
+};
 
 export default function FavoriteScreen() {
   const { signOut, isSignedIn } = useClerk();
@@ -24,6 +30,8 @@ export default function FavoriteScreen() {
   const [favoritesRecipe, setFavoritesRecipe] = useState([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
 
   useEffect(() => {
     if (!isSignedIn || !user) {
@@ -36,11 +44,12 @@ export default function FavoriteScreen() {
 
     const loadFavorites = async () => {
       try {
-        const res = await fetch(`${ApiUrl}/favorites/${user?.id}`);
+        const res = await fetch(`${Fav_URL}/favorites/${user?.id}`);
         if (!res.ok) throw new Error("Failed to load favorites");
         const data = await res.json();
+        console.log(data, "favorites");
 
-        const transformedFavorites = data.map((recipe) => ({
+        const transformedFavorites = data?.favorites?.map((recipe) => ({
           ...recipe,
           id: recipe.recipeId,
         }));
@@ -96,7 +105,9 @@ export default function FavoriteScreen() {
         <View style={favoritesStyles.recipesSection}>
           <FlatList
             data={favoritesRecipe}
-            renderItem={({ item }) => <RecipeCard recipe={item} />}
+            renderItem={({ item }) => (
+              <RecipeCard getLocalized={getLocalized} recipe={item} />
+            )}
             numColumns={2}
             columnWrapperStyle={favoritesStyles.row}
             keyExtractor={(item) => item?.id?.toString()}

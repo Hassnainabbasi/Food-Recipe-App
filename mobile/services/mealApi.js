@@ -1,91 +1,16 @@
 export const BASE_URL = "http://192.168.0.106:3000/api/recipe";
 export const WEB_URL = "http://localhost:3000/api/recipe";
+export const Fav_URL = "http://localhost:3000/api";
+
 
 export const MealApi = {
-  // searchMealsByName: async (query) => {
-  //   try {
-  //     const response = await fetch(
-  //       `${BASE_URL}/search.php?s=${encodeURIComponent(query)}`
-  //     );
-  //     const data = await response.json();
-  //     return data.meals || [];
-  //   } catch (e) {
-  //     console.log(e);
-  //     return [];
-  //   }
-  // },
-  // getMealById: async (id) => {
-  //   try {
-  //     const response = await fetch(`${BASE_URL}/lookup.php?i=${id}`);
-  //     const data = await response.json();
-  //     return data.meals ? data.meals[0] : null;
-  //   } catch (e) {
-  //     console.log(e);
-  //     return null;
-  //   }
-  // },
-  // getRandomMeal: async () => {
-  //   try {
-  //     const res = await fetch(`${BASE_URL}/random.php`);
-  //     const data = await res.json();
-  //     return data.meals ? data.meals[0] : null;
-  //   } catch (e) {
-  //     console.log(e);
-  //     return null;
-  //   }
-  // },
-  // getRandomMeals: async (count = 6) => {
-  //   try {
-  //     const promises = Array(count)
-  //       .fill()
-  //       .map(() => MealApi.getRandomMeal());
-  //     const meals = await Promise.all(promises);
-  //     return meals.filter((meal) => meal !== null);
-  //   } catch (e) {
-  //     console.log(e);
-  //     return [];
-  //   }
-  // },
-  // getCategories: async () => {
-  //   try {
-  //     const response = await fetch(`${BASE_URL}/categories.php`);
-  //     const data = await response.json();
-  //     return data.categories || [];
-  //   } catch (e) {
-  //     console.log(e);
-  //     return [];
-  //   }
-  // },
-  // filterByIngredent: async (ingredient) => {
-  //   try {
-  //     const response = await fetch(
-  //       `${BASE_URL}/filter.php?i=${encodeURIComponent(ingredient)}`
-  //     );
-  //     const data = await response.json();
-  //     return data.meals || [];
-  //   } catch (e) {
-  //     console.log(e);
-  //     return [];
-  //   }
-  // },
-  // filterByCategory: async (category) => {
-  //   try {
-  //     const response = await fetch(
-  //       `${BASE_URL}/filter.php?c=${encodeURIComponent(category)}`
-  //     );
-  //     const data = await response.json();
-  //     return data.meals || [];
-  //   } catch (e) {
-  //     console.log(e);
-  //     return [];
-  //   }
-  // },
   searchMealsByName: async (query) => {
     try {
       const res = await fetch(
         `${BASE_URL || WEB_URL}/search.php?s=${encodeURIComponent(query)}`
       );
       const data = await res.json();
+      console.log(data,'search')
       return data.meals || [];
     } catch (e) {
       console.log("searchMealsByName error:", e);
@@ -97,6 +22,7 @@ export const MealApi = {
     try {
       const res = await fetch(`${BASE_URL || WEB_URL}/lookup.php?i=${id}`);
       const data = await res.json();
+      console.log(data, 'is this data ')
       return data.meals ? data.meals[0] : null;
     } catch (e) {
       console.log("getMealById error:", e);
@@ -158,7 +84,6 @@ export const MealApi = {
         `${BASE_URL || WEB_URL}/filter.php?c=${encodeURIComponent(category)}`
       );
       const data = await res.json();
-      console.log(data.meals[0], "konsi category");
       return data.meals || [];
     } catch (e) {
       console.log("filterByCategory error:", e);
@@ -184,16 +109,20 @@ export const MealApi = {
     return {
       id: meal.id,
       title: meal.title,
+      title_json: meal.title_json,
       description: meal.description
         ? meal.description.substring(0, 120) + "..."
         : "Delicious meal from Recipe",
+      description_json: meal.description_json,
       image: meal.image,
       cookTime: meal.cookTime,
       servings: meal.servings,
-      category: meal.categories,
+      category: meal.category,
+      category_json: meal.category_json,
       area: meal.ingredients,
       originalData: meal,
       instructions: meal.instructions,
+      instructions_json: meal.instructions_json,
     };
   },
 };

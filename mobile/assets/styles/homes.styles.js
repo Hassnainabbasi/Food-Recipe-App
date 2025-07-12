@@ -302,6 +302,22 @@ export const recipeCardStyles = StyleSheet.create({
     overflow: "hidden",
     position: "relative",
   },
+  containerDetail: {
+    width: cardWidth,
+    backgroundColor: COLORS.card,
+    borderRadius: 16,
+    marginBottom: 16,
+    shadowColor: COLORS.shadow,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    overflow: "hidden",
+    position: "relative",
+  },
   adminContainer: {
     width: "100%",
     // backgroundColor: COLORS.card,
@@ -323,6 +339,11 @@ export const recipeCardStyles = StyleSheet.create({
     height: 180,
     width: "100%",
   },
+  imageContainerDetail: {
+    position: "relative",
+    height: 140,
+    width: "100%",
+  },
   image: {
     width: "100%",
     height: "100%",
@@ -330,6 +351,12 @@ export const recipeCardStyles = StyleSheet.create({
   content: {
     display: "flex",
     alignSelf: "center",
+  },
+  contentDetail: {
+    display: "flex",
+    alignSelf: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 5
   },
   imageOverlay: {
     ...StyleSheet.absoluteFillObject,

@@ -6,5 +6,9 @@
   "recipes": "Recipes",
   "language": "Language",
   "english": "English",
-  "urdu": "Urdu"
+  "urdu": "Urdu",
+  "Add Recipe": "Add Recipe",
+  "feature": "Feature",
+  "noRecipes": "No Recipes Found",
+  "tryDifferentCategory": "Try a different category"
 }

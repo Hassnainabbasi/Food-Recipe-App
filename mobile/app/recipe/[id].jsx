@@ -4,16 +4,16 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import WebView from "react-native-webview";
 import { recipeDetailStyles } from "../../assets/styles/recipe-detail.styles";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { ApiUrl } from "../../constant/api";
 import { COLORS } from "../../constant/color";
-import { MealApi } from "../../services/mealApi";
+import { BASE_URL, Fav_URL, MealApi, WEB_URL } from "../../services/mealApi";
 
 export default function RecipeDetailPage() {
   const { id: recipeId } = useLocalSearchParams();
+  console.log(recipeId);
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
@@ -21,7 +21,8 @@ export default function RecipeDetailPage() {
   const router = useRouter();
   const { user, isLoaded } = useUser();
   const userId = user?.id;
-
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
   if (!isLoaded) return <LoadingSpinner />;
 
   useEffect(() => {
@@ -31,7 +32,9 @@ export default function RecipeDetailPage() {
     getYoutubeUrl();
     const checkIfSaved = async () => {
       try {
-        const response = await fetch(`${ApiUrl}/favorites/${userId}`);
+        const response = await fetch(
+          `${WEB_URL || BASE_URL}/favorites/${userId}`
+        );
         const data = await response.json();
         const savedRecipeIds = data.some(
           (fav) => fav.recipeId === parseInt(recipeId)
@@ -47,14 +50,8 @@ export default function RecipeDetailPage() {
       setLoading(true);
       try {
         const mealData = await MealApi.getMealById(recipeId);
-        if (mealData) {
-          const tranformData = MealApi.transformMealData(mealData);
-          const recipevideo = {
-            ...tranformData,
-            youtubeUrl: mealData.strYoutube || null,
-          };
-          setRecipe(recipevideo);
-        }
+        console.log(mealData, "meal data");
+        setRecipe(mealData);
       } catch (error) {
         console.log(error.message, "loadDetail ka ");
       } finally {
@@ -77,7 +74,7 @@ export default function RecipeDetailPage() {
   const handleToggleSaved = async () => {
     setIsSaving(true);
     if (isSaved) {
-      const res = await fetch(`${ApiUrl}/favorites/${userId}/${recipeId}`, {
+      const res = await fetch(`${Fav_URL}/favorites/${userId}/${recipeId}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to remove recipe");
@@ -93,7 +90,7 @@ export default function RecipeDetailPage() {
           servings: recipe.servings,
         };
         console.log(data, "this data");
-        const res = await fetch(`${ApiUrl}/favorites`, {
+        const res = await fetch(`${Fav_URL}/favorites`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -159,10 +156,14 @@ export default function RecipeDetailPage() {
           <View style={recipeDetailStyles.titleSection}>
             <View style={recipeDetailStyles.categoryBadge}>
               <Text style={recipeDetailStyles.categoryText}>
-                {recipe.category}
+                {recipe?.category}
               </Text>
             </View>
-            <Text style={recipeDetailStyles.recipeTitle}>{recipe.title}</Text>
+
+            <Text style={recipeDetailStyles.recipeTitle}>
+              {" "}
+              {recipe?.title_json?.[lang] || recipe?.title}
+            </Text>
             {recipe?.area && (
               <View style={recipeDetailStyles.locationRow}>
                 <Ionicons
@@ -171,7 +172,7 @@ export default function RecipeDetailPage() {
                   color={COLORS.white}
                 />
                 <Text style={recipeDetailStyles.locationText}>
-                  {recipe.area} Cuisine
+                  {recipe?.area} Cuisine
                 </Text>
               </View>
             )}
@@ -187,9 +188,9 @@ export default function RecipeDetailPage() {
                 <Ionicons name="time" size={20} color={COLORS.white} />
               </LinearGradient>
               <Text style={recipeDetailStyles.statValue}>
-                {recipe.cookTime}
+                {recipe?.cookTime}
               </Text>
-              <Text style={recipeDetailStyles.statLabel}>Prep Time</Text>
+              <Text style={recipeDetailStyles?.statLabel}>Prep Time</Text>
             </View>
 
             <View style={recipeDetailStyles.statCard}>
@@ -200,34 +201,11 @@ export default function RecipeDetailPage() {
                 <Ionicons name="people" size={20} color={COLORS.white} />
               </LinearGradient>
               <Text style={recipeDetailStyles.statValue}>
-                {recipe.servings}
+                {recipe?.servings}
               </Text>
               <Text style={recipeDetailStyles.statLabel}>Servings</Text>
             </View>
           </View>
-          {recipe?.youtubeUrl && (
-            <View style={recipeDetailStyles.sectionContainer}>
-              <View style={recipeDetailStyles.sectionTitleRow}>
-                <LinearGradient
-                  colors={["#FF0000", "#CC0000"]}
-                  style={recipeDetailStyles.sectionIcon}
-                >
-                  <Ionicons name="play" size={16} color={COLORS.white} />
-                </LinearGradient>
-                <Text style={recipeDetailStyles.sectionTitle}>
-                  Video Tutorial
-                </Text>
-              </View>
-              <View style={recipeDetailStyles.videoCard}>
-                <WebView
-                  style={recipeDetailStyles.webview}
-                  allowsFullscreenVideo
-                  source={{ uri: getYoutubeUrl(recipe.youtubeUrl) }}
-                  mediaPlaybackRequiresUserAction={false}
-                />
-              </View>
-            </View>
-          )}
           <View style={recipeDetailStyles.sectionContainer}>
             <View style={recipeDetailStyles.sectionTitleRow}>
               <LinearGradient
@@ -239,20 +217,22 @@ export default function RecipeDetailPage() {
               <Text style={recipeDetailStyles.sectionTitle}>Ingredients</Text>
               <View style={recipeDetailStyles.countBadge}>
                 <Text style={recipeDetailStyles.countText}>
-                  {recipe.ingredients.length}
+                  {recipe?.ingredients?.length}
                 </Text>
               </View>
             </View>
           </View>
           <View style={recipeDetailStyles.ingredientsGrid}>
-            {recipe.ingredients.map((ing, index) => (
+            {recipe?.ingredients?.map((ing, index) => (
               <View key={ing} style={recipeDetailStyles.ingredientCard}>
                 <View style={recipeDetailStyles.ingredientNumber}>
                   <Text style={recipeDetailStyles.ingredientNumberText}>
                     {index + 1}
                   </Text>
                 </View>
-                <Text style={recipeDetailStyles.ingredientText}>{ing}</Text>
+                <Text style={recipeDetailStyles.ingredientText}>
+                  {ing?.[lang] || ing?.en || ing}
+                </Text>
                 <View style={recipeDetailStyles.ingredientCheck}>
                   <Ionicons
                     name="checkmark-circle-outline"
@@ -274,42 +254,34 @@ export default function RecipeDetailPage() {
               <Text style={recipeDetailStyles.sectionTitle}>Instructions</Text>
               <View style={recipeDetailStyles.countBadge}>
                 <Text style={recipeDetailStyles.countText}>
-                  {recipe.instructions.length}
+                  {recipe?.instructions?.length}
                 </Text>
               </View>
             </View>
             <View style={recipeDetailStyles.instructionsContainer}>
-              {recipe.instructions.map((instruction, index) => (
-                <View key={index} style={recipeDetailStyles.instructionCard}>
-                  <LinearGradient
-                    colors={[COLORS.primary, COLORS.primary + "CC"]}
-                    style={recipeDetailStyles.stepIndicator}
-                  >
-                    <Text style={recipeDetailStyles.stepNumber}>
-                      {index + 1}
-                    </Text>
-                  </LinearGradient>
-                  <View style={recipeDetailStyles.instructionContent}>
-                    <Text style={recipeDetailStyles.instructionText}>
-                      {instruction}
-                    </Text>
-                    <View style={recipeDetailStyles.instructionFooter}>
-                      <Text style={recipeDetailStyles.stepLabel}>
-                        Step {index + 1}
-                      </Text>
-                      <TouchableOpacity
-                        style={recipeDetailStyles.completeButton}
-                      >
-                        <Ionicons
-                          name="checkmark"
-                          size={16}
-                          color={COLORS.primary}
-                        />
-                      </TouchableOpacity>
-                    </View>
+              <View style={recipeDetailStyles.instructionCard}>
+                <LinearGradient
+                  colors={[COLORS.primary, COLORS.primary + "CC"]}
+                  style={recipeDetailStyles.stepIndicator}
+                >
+                  <Text style={recipeDetailStyles?.stepNumber}>1</Text>
+                </LinearGradient>
+                <View style={recipeDetailStyles.instructionContent}>
+                  <Text style={recipeDetailStyles.instructionText}>
+                    {recipe?.instructions_json?.[lang] || recipe?.instructions}
+                  </Text>
+                  <View style={recipeDetailStyles.instructionFooter}>
+                    <Text style={recipeDetailStyles.stepLabel}>Step 1</Text>
+                    <TouchableOpacity style={recipeDetailStyles.completeButton}>
+                      <Ionicons
+                        name="checkmark"
+                        size={16}
+                        color={COLORS.primary}
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
-              ))}
+              </View>
             </View>
           </View>
           <TouchableOpacity
