@@ -1,4 +1,4 @@
-import { verifyToken } from "../../middleware/auth";
+import { verifyToken } from "../middleware/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
