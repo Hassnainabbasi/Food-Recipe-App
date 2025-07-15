@@ -1,3 +1,4 @@
+import "../../constant/setup";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";

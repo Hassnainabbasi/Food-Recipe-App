@@ -1,3 +1,4 @@
+import '../constant/setup'
 import { COLORS } from "@/constant/color";
 import React from "react";
 import { View } from "react-native";

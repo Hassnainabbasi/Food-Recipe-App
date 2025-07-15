@@ -373,7 +373,7 @@ export const recipeCardStyles = StyleSheet.create({
   title: {
     fontSize: 15,
     fontWeight: "700",
-    color: COLORS.white,
+    color: COLORS.primary,
     marginBottom: 4,
     // lineHeight: 20,
   },
@@ -399,8 +399,9 @@ export const recipeCardStyles = StyleSheet.create({
     fontWeight: "500",
   },
   servingsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10
   },
   servingsText: {
     fontSize: 11,

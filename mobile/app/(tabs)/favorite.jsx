@@ -14,8 +14,8 @@ import {
 } from "react-native";
 import { favoritesStyles } from "../../assets/styles/favorties.styles";
 import NoFavoritesFound from "../../components/FavoriteNotFound";
+import FavoriteRecipeCard from "../../components/FavoriteRecipeCard";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import RecipeCard from "../../components/RecipeCard";
 import { COLORS } from "../../constant/color";
 import { Fav_URL } from "../../services/mealApi";
 
@@ -43,11 +43,11 @@ export default function FavoriteScreen() {
     if (!user) return;
 
     const loadFavorites = async () => {
+      setLoading(true);
       try {
         const res = await fetch(`${Fav_URL}/favorites/${user?.id}`);
         if (!res.ok) throw new Error("Failed to load favorites");
         const data = await res.json();
-        console.log(data, "favorites");
 
         const transformedFavorites = data?.favorites?.map((recipe) => ({
           ...recipe,
@@ -106,7 +106,11 @@ export default function FavoriteScreen() {
           <FlatList
             data={favoritesRecipe}
             renderItem={({ item }) => (
-              <RecipeCard getLocalized={getLocalized} recipe={item} />
+              <FavoriteRecipeCard
+                getLocalized={getLocalized}
+                lang={lang}
+                recipe={item}
+              />
             )}
             numColumns={2}
             columnWrapperStyle={favoritesStyles.row}

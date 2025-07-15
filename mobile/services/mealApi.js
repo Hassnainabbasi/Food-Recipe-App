@@ -7,7 +7,7 @@ export const MealApi = {
   searchMealsByName: async (query) => {
     try {
       const res = await fetch(
-        `${BASE_URL || WEB_URL}/search.php?s=${encodeURIComponent(query)}`
+        `${WEB_URL}/search.php?s=${encodeURIComponent(query)}`
       );
       const data = await res.json();
       console.log(data,'search')
@@ -20,7 +20,7 @@ export const MealApi = {
 
   getMealById: async (id) => {
     try {
-      const res = await fetch(`${BASE_URL || WEB_URL}/lookup.php?i=${id}`);
+      const res = await fetch(`${WEB_URL}/lookup.php?i=${id}`);
       const data = await res.json();
       console.log(data, 'is this data ')
       return data.meals ? data.meals[0] : null;
@@ -32,7 +32,7 @@ export const MealApi = {
 
   getRandomMeal: async () => {
     try {
-      const res = await fetch(`${BASE_URL || WEB_URL}/random.php`);
+      const res = await fetch(`${WEB_URL}/random.php`);
       const data = await res.json();
       return data.meals ? data.meals[0] : null;
     } catch (e) {
@@ -56,7 +56,7 @@ export const MealApi = {
 
   getCategories: async () => {
     try {
-      const res = await fetch(`${BASE_URL || WEB_URL}/categories.php`);
+      const res = await fetch(`${WEB_URL}/categories.php`);
       const data = await res.json();
       return data.categories || [];
     } catch (e) {
@@ -68,7 +68,7 @@ export const MealApi = {
   filterByIngredient: async (ingredient) => {
     try {
       const res = await fetch(
-        `${BASE_URL || WEB_URL}/filter.php?i=${encodeURIComponent(ingredient)}`
+        `${WEB_URL}/filter.php?i=${encodeURIComponent(ingredient)}`
       );
       const data = await res.json();
       return data.meals || [];
@@ -81,7 +81,7 @@ export const MealApi = {
   filterByCategory: async (category) => {
     try {
       const res = await fetch(
-        `${BASE_URL || WEB_URL}/filter.php?c=${encodeURIComponent(category)}`
+        `${WEB_URL}/filter.php?c=${encodeURIComponent(category)}`
       );
       const data = await res.json();
       return data.meals || [];

@@ -1,3 +1,4 @@
+import './../constant/setup'
 import { useNavigationContainerRef, useRouter } from "expo-router";
 import { useEffect } from "react";
 import '../src/locales/i18n'
@@ -17,3 +18,4 @@ export default function Index() {
 
   return null;
 }
+

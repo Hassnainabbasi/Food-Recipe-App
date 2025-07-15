@@ -292,7 +292,11 @@ export async function GET() {
         { status: 404, headers: corsHeaders }
       );
     }
-    return NextResponse.json(recipes, { status: 200, headers: corsHeaders });
+    return NextResponse.json(recipes, {
+      status: 200,
+      headers: corsHeaders,
+      message: "Recipe route working",
+    });
   } catch (error) {
     console.log(error);
     return NextResponse.json(

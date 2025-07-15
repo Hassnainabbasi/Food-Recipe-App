@@ -1,3 +1,4 @@
+import '../../constant/setup'
 import { useClerk, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -68,7 +69,6 @@ const HomeScreen = () => {
       });
 
       setCategories(transformCategpories);
-      console.log(transformCategpories, "transform Category");
 
       const transformMeals = randomMeals
         .map((meal) => MealApi.transformMealData(meal))
@@ -92,7 +92,6 @@ const HomeScreen = () => {
         .map((meal) => MealApi.transformMealData(meal))
         .filter((meal) => meal !== null);
       setRecipes(transform);
-      console.log(transform, "transform");
     } catch (error) {
       console.error(error);
       setRecipes([]);

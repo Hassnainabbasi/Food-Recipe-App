@@ -26,7 +26,7 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
 
-  const handleSignUp = async () => {
+  const handleSignUp = async () => {  
     if (!email || !password)
       return Alert.alert(" Error", "Please enter both email and password");
 

@@ -7,6 +7,7 @@ import {
   integer,
   unique,
   jsonb,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 export const favoritesTable = pgTable(
@@ -45,4 +46,12 @@ export const recipesTable = pgTable("recipes", {
   category: text("category").notNull(),
   category_json: jsonb("category_json"),
   status: text("status").default("pending").notNull(),
+});
+
+export const usersTable = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  password: varchar("password", { length: 255 }).notNull(),
+  verificationCode: varchar("verificationCode", { length: 6 }),
+  isVerified: integer("isVerified").default(0),
 });

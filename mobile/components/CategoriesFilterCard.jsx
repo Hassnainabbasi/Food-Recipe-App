@@ -2,10 +2,10 @@ import { Image } from "expo-image";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { homeStyles } from "../assets/styles/homes.styles";
 
-export const getLocalized = (obj, key, lang = "en") => {
-  if (!obj || !obj[`${key}_json`]) return obj[key] || "";
-  return obj[`${key}_json`][lang] || obj[key];
-};
+// export const getLocalized = (obj, key, lang = "en") => {
+//   if (!obj || !obj[`${key}_json`]) return obj[key] || "";
+//   return obj[`${key}_json`][lang] || obj[key];
+// };
 
 export default function CategoriesFilterCard({
   categories,
