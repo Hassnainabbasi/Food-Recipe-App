@@ -1,7 +1,6 @@
-export const BASE_URL = "http://192.168.0.106:3000/api/recipe";
-export const WEB_URL = "http://localhost:3000/api/recipe";
-export const Fav_URL = "http://localhost:3000/api";
-
+export const BASE_URL = "https://food-recipe-app-lnjg.vercel.app/api/recipe";
+export const WEB_URL = "https://food-recipe-app-lnjg.vercel.app/api/recipe";
+export const Fav_URL = "https://food-recipe-app-lnjg.vercel.app/api";
 
 export const MealApi = {
   searchMealsByName: async (query) => {
@@ -10,7 +9,7 @@ export const MealApi = {
         `${WEB_URL}/search.php?s=${encodeURIComponent(query)}`
       );
       const data = await res.json();
-      console.log(data,'search')
+      console.log(data, "search");
       return data.meals || [];
     } catch (e) {
       console.log("searchMealsByName error:", e);
@@ -22,7 +21,7 @@ export const MealApi = {
     try {
       const res = await fetch(`${WEB_URL}/lookup.php?i=${id}`);
       const data = await res.json();
-      console.log(data, 'is this data ')
+      console.log(data, "is this data ");
       return data.meals ? data.meals[0] : null;
     } catch (e) {
       console.log("getMealById error:", e);
