@@ -55,3 +55,9 @@ export const usersTable = pgTable("users", {
   verificationCode: varchar("verificationCode", { length: 6 }),
   isVerified: integer("isVerified").default(0),
 });
+
+export const revokedTokensTable = pgTable("revoked_tokens", {
+  id: serial("id").primaryKey(),
+  token: varchar("token", { length: 512 }).notNull(),
+  expiredAt: timestamp("expiredAt").notNull(),
+});

@@ -50,6 +50,13 @@
       "when": 1752505366485,
       "tag": "0006_numerous_junta",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1752588736068,
+      "tag": "0007_slim_the_anarchist",
+      "breakpoints": true
     }
   ]
 }
