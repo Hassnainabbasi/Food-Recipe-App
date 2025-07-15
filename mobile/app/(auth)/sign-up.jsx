@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { authStyles } from "../../assets/styles/auth.styles";
 import { COLORS } from "../../constant/color";
+import { HOST_URL } from "../../constant/constant";
 import VerifyEmailScreen from "./verify-email";
 
 export default function SignUp() {
@@ -26,7 +27,7 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
 
-  const handleSignUp = async () => {  
+  const handleSignUp = async () => {
     if (!email || !password)
       return Alert.alert(" Error", "Please enter both email and password");
 
@@ -37,12 +38,14 @@ export default function SignUp() {
     setLoading(true);
 
     try {
-      await signUp.create({ emailAddress: email, password });
-
-      await signUp.prepareEmailAddressVerification({
-        strategy: "email_code",
+      const respone = await fetch(`${HOST_URL}/api/user/signup`, {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
       });
-
+      if (!respone.ok) {
+        throw new Error(respone.statusText);
+      }
+      const data = await respone.json();
       setPendingVerification(true);
     } catch (error) {
       console.error("SignUp error", JSON.stringify(error, null, 2));

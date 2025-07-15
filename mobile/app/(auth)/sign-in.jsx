@@ -25,36 +25,6 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // const handleSignIn = async () => {
-  //   if (!email || !password) {
-  //     Alert.alert(" Error", "Please enter both email and password");
-  //     return;
-  //   }
-  //   if (!isLoaded) return;
-  //   setLoading(true);
-
-  //   try {
-  //     const signInAttempt = await signIn.create({
-  //       identifier: email,
-  //       password,
-  //     });
-  //     if (signInAttempt.status === "complete") {
-  //       await setActive({ session: signInAttempt.createdSessionId });
-  //       if (email === ADMIN_EMAIL) {
-  //         router.replace("/(admin)/");
-  //       } else {
-  //         router.replace("/(tabs)/");
-  //       }
-  //     } else {
-  //       Alert.alert("Error", "Invalid email or password");
-  //       console.error(JSON.stringify(signInAttempt, null, 2));
-  //     }
-  //   } catch (e) {
-  //     console.log(e.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const handleSignIn = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Please enter both email and password");

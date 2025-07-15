@@ -13,31 +13,34 @@ import {
 } from "react-native";
 import { authStyles } from "../../assets/styles/auth.styles";
 import { COLORS } from "../../constant/color";
+import { HOST_URL } from "../../constant/constant";
+import { useRouter } from "expo-router";
 
 export default function VerifyEmailScreen({ email, onBack }) {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter()
   const handleVerification = async () => {
-    console.log(code,"this is code")
+    console.log(code, "this is code");
 
     if (!isLoaded) return;
     setLoading(true);
 
     try {
-      const result = await signUp.attemptEmailAddressVerification({ code });
+      const result = await fetch(`${HOST_URL}/api/user/verify`, {
+        method: "POST",
+        body: JSON.stringify({ email, code }),
+      });
 
-      if (result.status === "complete") {
-        await setActive({ session: result.createdSessionId });
-      } else {
-        Alert.alert("Error", "Verification failed. Please try again.");
-      console.error(JSON.stringify(result, null, 2));
-      }
+      if (result.ok) {
+        Alert.alert("Email Verified", "Your email has been verified");
+        router.push('/')
+       }
     } catch (err) {
       Alert.alert("Error", err.errors?.[0]?.message || "Verification failed");
       console.error(JSON.stringify(err, null, 2));
-     } finally {
+    } finally {
       setLoading(false);
     }
   };
