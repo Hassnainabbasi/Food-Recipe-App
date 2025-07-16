@@ -1,3 +1,5 @@
+import { recipesTable } from "../../db/schema";
+import { db } from "../../config/db";
 import { NextResponse } from "next/server";
 
 const corsHeaders = {
