@@ -1,6 +1,6 @@
 import { db } from "../../../config/drizzle";
 import { recipesTable } from "../../../db/schema";
-import { ilike } from "drizzle-orm";
+import { and, eq, ilike } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
@@ -15,7 +15,12 @@ export async function GET(req) {
       results = await db
         .select()
         .from(recipesTable)
-        .where(ilike(recipesTable.ingredients, `%${ingredient}%`));
+        .where(
+          and(
+            ilike(recipesTable.ingredients, `%${ingredient}%`),
+            eq((recipesTable.status, "approved"))
+          )
+        );
     } else if (category) {
       results = await db
         .select()

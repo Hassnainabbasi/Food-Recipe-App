@@ -1,10 +1,15 @@
+import { eq } from "drizzle-orm";
 import { db } from "../../../config/drizzle";
 import { recipesTable } from "../../../db/schema";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const all = await db.select().from(recipesTable);
+    const all = await db
+      .select()
+      .from(recipesTable)
+      .where(eq(recipesTable.status, "approved"));
+
     if (!all.length) {
       return NextResponse.json({ meals: [] }, { status: 200 });
     }

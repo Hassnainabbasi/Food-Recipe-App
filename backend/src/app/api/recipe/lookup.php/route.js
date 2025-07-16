@@ -24,7 +24,12 @@ export async function GET(req) {
     const result = await db
       .select()
       .from(recipesTable)
-      .where(eq(recipesTable.id, parseInt(id)))
+      .where(
+        and(
+          eq(recipesTable.id, parseInt(id)),
+          eq(recipesTable.status, "approved")
+        )
+      )
       .limit(1);
 
     return NextResponse.json(

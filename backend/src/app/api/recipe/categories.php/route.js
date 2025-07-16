@@ -11,7 +11,11 @@ const corsHeaders = {
 
 export async function GET() {
   try {
-    const recipes = await db.select().from(recipesTable);
+    const recipes = await db
+      .select()
+      .from(recipesTable)
+      .where(eq(recipesTable.status, "approved"));
+
     const categoryMap = new Map();
 
     for (const recipe of recipes) {

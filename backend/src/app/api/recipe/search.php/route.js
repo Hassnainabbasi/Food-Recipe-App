@@ -18,8 +18,12 @@ export async function GET(req) {
     const results = await db
       .select()
       .from(recipesTable)
-      .where(ilike(recipesTable.title, `%${searchQuery}%`));
-
+      .where(
+        and(
+          ilike(recipesTable.title, `%${searchQuery}%`),
+          eq(recipesTable.status, "approved")
+        )
+      );
     return NextResponse.json(
       { meals: results },
       {
