@@ -15,7 +15,8 @@ import {
 } from "react-native";
 import { authStyles } from "../../assets/styles/auth.styles";
 import { COLORS } from "../../constant/color";
-import { ADMIN_EMAIL } from "../../constant/constant";
+import { ADMIN_EMAIL, HOST_URL } from "../../constant/constant";
+import * as SecureStore from "expo-secure-store" 
 
 export default function SignIn() {
   const router = useRouter();
@@ -30,20 +31,24 @@ export default function SignIn() {
       Alert.alert("Error", "Please enter both email and password");
       return;
     }
-    if (!isLoaded) return;
 
     setLoading(true);
     try {
-      const signInAttempt = await signIn.create({
-        identifier: email,
-        password,
+      const respone = await fetch(`${HOST_URL}/api/user/signin`, {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password,
+        }),
       });
 
-      console.log("SignIn Attempt:", JSON.stringify(signInAttempt, null, 2));
-
-      if (signInAttempt.status === "complete") {
-        await setActive({ session: signInAttempt.createdSessionId });
-
+      if (respone.ok) {
+        const data = await respone.json();
+        console.log(data);
+        if (data?.token) {
+          await SecureStore.setItemAsync("token", data.token);
+          console.log("Token saved successfully.");
+        }
         if (email === ADMIN_EMAIL && password === "@Sing1412") {
           router.replace("/(admin)/");
         } else {
@@ -62,6 +67,7 @@ export default function SignIn() {
       setLoading(false);
     }
   };
+  
 
   return (
     <View style={authStyles.container}>

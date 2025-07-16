@@ -1,11 +1,12 @@
-import '../../constant/setup'
 import { useClerk, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  Alert,
   FlatList,
   Modal,
   RefreshControl,
@@ -14,13 +15,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import "../../constant/setup";
 
 import { homeStyles } from "../../assets/styles/homes.styles";
 import CategoriesFilterCard from "../../components/CategoriesFilterCard";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import RecipeCard from "../../components/RecipeCard";
 import { COLORS } from "../../constant/color";
-import { ADMIN_EMAIL } from "../../constant/constant";
+import { ADMIN_EMAIL, HOST_URL } from "../../constant/constant";
 import { MealApi } from "../../services/mealApi";
 
 const getLocalized = (obj, key, lang) => {
@@ -48,7 +50,7 @@ const HomeScreen = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const { isSignedIn, signOut } = useClerk();
   const { user, isLoaded } = useUser();
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const loadData = async () => {
     try {
       setLoading(true);
@@ -57,7 +59,6 @@ const HomeScreen = () => {
         MealApi.getRandomMeals(12),
         MealApi.getRandomMeal(),
       ]);
-
 
       const transformCategpories = apiCategories.map((cat, index) => {
         return {
@@ -115,6 +116,59 @@ const HomeScreen = () => {
     }
   }, [isLoaded, user]);
 
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await SecureStore.getItemAsync("token");
+      if (token) {
+        const res = await fetch(`${HOST_URL}/api/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+          await SecureStore.deleteItemAsync("token");
+        }
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkToken();
+  }, []);
+
+  const handleLogout = async () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            const token = await SecureStore.getItemAsync("token");
+            const res = await fetch(`${HOST_URL}/api/user/logout`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            if (res.ok) {
+              setIsLoggedIn(false);
+              await SecureStore.deleteItemAsync("token");
+              const data = await res.json();
+              console.log(data, "data");
+            }
+            console.log("✅ Sign out successful");
+          } catch (error) {
+            console.error("❌ Error during sign out:", error.message);
+          }
+        },
+      },
+    ]);
+  };
+
   if (loading) return <LoadingSpinner />;
 
   return (
@@ -160,15 +214,15 @@ const HomeScreen = () => {
                     style={homeStyles.modalButton}
                     onPress={() => {
                       setMenuVisible(false);
-                      if (isSignedIn) {
-                        signOut();
+                      if (isLoggedIn) {
+                        handleLogout();
                       } else {
                         router.push("/(auth)/sign-in");
                       }
                     }}
                   >
                     <Text style={homeStyles.modalButtonText}>
-                      {isSignedIn ? t("logout") : t("login")}
+                      {isLoggedIn ? t("logout") : t("login")}
                     </Text>
                   </TouchableOpacity>
                 </View>

@@ -1,5 +1,6 @@
 import { useSignUp } from "@clerk/clerk-expo";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -14,13 +15,13 @@ import {
 import { authStyles } from "../../assets/styles/auth.styles";
 import { COLORS } from "../../constant/color";
 import { HOST_URL } from "../../constant/constant";
-import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 
 export default function VerifyEmailScreen({ email, onBack }) {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
   const handleVerification = async () => {
     console.log(code, "this is code");
 
@@ -34,9 +35,14 @@ export default function VerifyEmailScreen({ email, onBack }) {
       });
 
       if (result.ok) {
-        Alert.alert("Email Verified", "Your email has been verified");
-        router.push('/')
-       }
+        const data = await result.json();
+        console.log(data);
+        if (data?.token) {
+          await SecureStore.setItemAsync("token", data.token);
+          console.log("Token saved successfully.");
+        }
+        router.push("/");
+      }
     } catch (err) {
       Alert.alert("Error", err.errors?.[0]?.message || "Verification failed");
       console.error(JSON.stringify(err, null, 2));

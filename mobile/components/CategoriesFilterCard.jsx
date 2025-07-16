@@ -22,7 +22,6 @@ export default function CategoriesFilterCard({
       >
         {categories.map((cat) => {
           const localizedName = cat.category_json[lang] || cat.name;
-          console.log(localizedName, "lo");
           const isSelected = selectCategory === localizedName;
           return (
             <TouchableOpacity
