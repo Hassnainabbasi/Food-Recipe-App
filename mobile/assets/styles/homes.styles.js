@@ -377,6 +377,12 @@ export const recipeCardStyles = StyleSheet.create({
     marginBottom: 4,
     // lineHeight: 20,
   },
+  titleAdmin : {
+    fontSize: 15,
+    fontWeight: "700",
+    color: COLORS.white,
+    marginBottom: 4,
+  },
   description: {
     fontSize: 12,
     color: COLORS.textLight,

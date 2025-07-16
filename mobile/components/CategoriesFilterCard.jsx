@@ -2,16 +2,17 @@ import { Image } from "expo-image";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { homeStyles } from "../assets/styles/homes.styles";
 
-// export const getLocalized = (obj, key, lang = "en") => {
-//   if (!obj || !obj[`${key}_json`]) return obj[key] || "";
-//   return obj[`${key}_json`][lang] || obj[key];
-// };
+function capitalize(name) {
+  if (!name) return "";
+  const word = name.split(" ");
+  word[0] = word[0].charAt(0).toUpperCase() + word[0].slice(1);
+  return word.join(" ");
+}
 
 export default function CategoriesFilterCard({
   categories,
   selectCategory,
   onSelectCategory,
-  lang,
 }) {
   return (
     <View style={homeStyles.categoryFilterContainer}>
@@ -21,8 +22,7 @@ export default function CategoriesFilterCard({
         contentContainerStyle={homeStyles.categoryFilterScrollContent}
       >
         {categories.map((cat) => {
-          const localizedName = cat.category_json[lang] || cat.name;
-          const isSelected = selectCategory === localizedName;
+          const isSelected = selectCategory === cat.name;
           return (
             <TouchableOpacity
               key={cat.id}
@@ -30,7 +30,7 @@ export default function CategoriesFilterCard({
                 homeStyles.categoryButton,
                 isSelected && homeStyles.selectedCategory,
               ]}
-              onPress={() => onSelectCategory(localizedName)}
+              onPress={() => onSelectCategory(cat.name)}
               activeOpacity={0.7}
             >
               <Image
@@ -48,7 +48,7 @@ export default function CategoriesFilterCard({
                   isSelected && homeStyles.selectedCategoryText,
                 ]}
               >
-                {localizedName}
+                {capitalize(cat.name)}
               </Text>
             </TouchableOpacity>
           );

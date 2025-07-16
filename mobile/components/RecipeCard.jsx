@@ -5,7 +5,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { recipeCardStyles } from "../assets/styles/homes.styles";
 import { COLORS } from "../constant/color";
 
-const RecipeCard = ({ recipe, getLocalized, lang }) => {
+const RecipeCard = ({ recipe }) => {
   const router = useRouter();
   return (
     <TouchableOpacity
@@ -24,11 +24,11 @@ const RecipeCard = ({ recipe, getLocalized, lang }) => {
 
       <View style={recipeCardStyles.contentDetail}>
         <Text style={recipeCardStyles.title} numberOfLines={2}>
-          {getLocalized(recipe, "title", lang)}
+          {recipe.title}
         </Text>
         {recipe.description && (
           <Text style={recipeCardStyles.description} numberOfLines={2}>
-            {getLocalized(recipe, "description", lang)}
+            {recipe.description}
           </Text>
         )}
 

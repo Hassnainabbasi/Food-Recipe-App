@@ -111,10 +111,31 @@ const HomeScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (isLoaded && user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL) {
-      router.replace("/(admin)/");
-    }
-  }, [isLoaded, user]);
+    const checkAdminRedirect = async () => {
+      try {
+        const token = await SecureStore.getItemAsync("token");
+        if (token) {
+          const res = await fetch(`${HOST_URL}/api/profile`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (res.ok) {
+            const userData = await res.json();
+            if (userData.user.email == ADMIN_EMAIL) {
+              router.push("/(admin)/");
+            }
+          } else {
+            console.log("Not logged in or unauthorized");
+          }
+        }
+      } catch (error) {
+        console.error("Error checking admin user:", error);
+      }
+    };
+
+    checkAdminRedirect();
+  }, []);
 
   useEffect(() => {
     const checkToken = async () => {
@@ -267,7 +288,7 @@ const HomeScreen = () => {
                   </View>
                   <View style={homeStyles.featuredContent}>
                     <Text style={homeStyles.featuredTitle}>
-                      {getLocalized(featureRecipe, "title", lang)}
+                      {featureRecipe.title}
                     </Text>
                     <View style={homeStyles.featuredMeta}>
                       <View style={homeStyles.metaItem}>
@@ -299,11 +320,11 @@ const HomeScreen = () => {
         )}
         {categories.length > 0 && (
           <CategoriesFilterCard
-            getLocalized={getLocalized}
-            lang={lang}
             categories={categories}
             selectCategory={selectCategory}
             onSelectCategory={handleCategorySelect}
+            getLocalized={getLocalized}
+            lang={lang}
           />
         )}
         <View style={homeStyles.recipesSection}>
@@ -317,8 +338,6 @@ const HomeScreen = () => {
             renderItem={({ item }) => (
               <RecipeCard
                 recipe={item}
-                getLocalized={getLocalized}
-                lang={lang}
               />
             )}
             keyExtractor={(item) => item?.id?.toString()}

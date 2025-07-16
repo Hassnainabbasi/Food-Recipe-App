@@ -1,7 +1,7 @@
-import { useClerk, useUser } from "@clerk/clerk-expo";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -14,9 +14,9 @@ import {
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { authStyles } from "../../assets/styles/auth.styles";
-import { ApiUrl } from "../../constant/api";
 import { COLORS } from "../../constant/color";
-import { BASE_URL, WEB_URL } from "../../services/mealApi";
+import { HOST_URL } from "../../constant/constant";
+import { WEB_URL } from "../../services/mealApi";
 
 export default function CreateRecipeScreen() {
   const router = useRouter();
@@ -28,13 +28,37 @@ export default function CreateRecipeScreen() {
   const [instructions, setInstructions] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const { user } = useUser();
-  // console.log(user,'user',user?.id,'userId')
-  const userId = user?.id;
-  const { isSignedIn } = useClerk();
 
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await SecureStore.getItemAsync("token");
+      if (token) {
+        const res = await fetch(`${HOST_URL}/api/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+          setIsLoggedIn(true);
+        } else {
+          await SecureStore.deleteItemAsync("token");
+        }
+      } else {
+        setIsLoggedIn(false);
+        await SecureStore.deleteItemAsync("token");
+        router.push("/(auth)/sign-in");
+      }
+    };
+
+    checkToken();
+  }, []);
+  const userId = user?.id;
   const updateIngredient = (text, index) => {
     const newIngredients = [...ingredients];
     newIngredients[index] = text;
@@ -43,12 +67,6 @@ export default function CreateRecipeScreen() {
   const addIngredientField = () => {
     setIngredients([...ingredients, ""]);
   };
-
-  useEffect(() => {
-    if (!isSignedIn || !user) {
-      router.push("/(auth)/sign-in");
-    }
-  }, [isSignedIn, user]);
 
   const categoryOptions = [
     { label: "Chicken Recipes", value: "chicken" },
@@ -67,9 +85,15 @@ export default function CreateRecipeScreen() {
 
   const handleSignIn = async () => {
     let imageUrl = "";
-    if (image.startsWith("data:image")) {
+    if (image) {
+      const fileType = image.split(".").pop();
+      const mimeType = `image/${fileType}`;
       const formData = new FormData();
-      formData.append("file", image);
+      formData.append("file", {
+        uri: image,
+        type: mimeType,
+        name: `upload.${fileType}`,
+      });
       formData.append("upload_preset", "Food Recipe");
       formData.append("cloud_name", "djmfadch8");
       console.log("formData", formData);
@@ -91,9 +115,9 @@ export default function CreateRecipeScreen() {
         const imageData = await res.json();
         console.log("imageData", imageData);
         imageUrl = imageData.secure_url;
-        console.log(imageUrl);
+        console.log(imageUrl, "imageUrl");
       } catch (error) {
-        console.log(error);
+        console.log(error.message);
       }
     }
     setLoading(true);
@@ -108,7 +132,6 @@ export default function CreateRecipeScreen() {
       category,
       userId,
     };
-
     try {
       const response = await fetch(`${WEB_URL}`, {
         method: "POST",
@@ -117,7 +140,8 @@ export default function CreateRecipeScreen() {
       });
 
       if (!response.ok) throw new Error("Failed to Add Recipe");
-      const result = await res.json();
+      const result = await response.json();
+      console.log(response, "response");
       console.log(result, "data");
     } catch (e) {
       console.log(e.message);

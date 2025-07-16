@@ -11,7 +11,7 @@ export default function Index() {
     const timeout = setTimeout(() => {
       console.log("Redirecting to /tabs...");
       router.replace("/(tabs)");
-    }, 100); // ⏳ Small delay ensures mounting is done
+    }, 100);
 
     return () => clearTimeout(timeout);
   }, []);

@@ -1,8 +1,9 @@
 import { useSignIn } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { Redirect, useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
+import { useEffect, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -16,7 +17,6 @@ import {
 import { authStyles } from "../../assets/styles/auth.styles";
 import { COLORS } from "../../constant/color";
 import { ADMIN_EMAIL, HOST_URL } from "../../constant/constant";
-import * as SecureStore from "expo-secure-store" 
 
 export default function SignIn() {
   const router = useRouter();
@@ -25,6 +25,30 @@ export default function SignIn() {
   const [showpassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await SecureStore.getItemAsync("token");
+      if (token) {
+        const res = await fetch(`${HOST_URL}/api/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+          await SecureStore.deleteItemAsync("token");
+        }
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkToken();
+  }, [isLoggedIn]);
 
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -67,7 +91,10 @@ export default function SignIn() {
       setLoading(false);
     }
   };
-  
+
+  if (isLoggedIn) {
+    <Redirect href={"/"} />;
+  }
 
   return (
     <View style={authStyles.container}>

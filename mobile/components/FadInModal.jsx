@@ -1,8 +1,8 @@
-import { useClerk } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import * as SecureStore from "expo-secure-store";
+import { useEffect, useState } from "react";
+import { Alert, TouchableOpacity, View } from "react-native";
 import Animated, {
   Easing,
   FadeInDown,
@@ -12,9 +12,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { homeStyles } from "../assets/styles/homes.styles";
 import { COLORS } from "../constant/color";
+import { HOST_URL } from "../constant/constant";
 
 function FadeInModalContent({ onClose }) {
-  const { isSignedIn, signOut } = useClerk();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
 
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(30);
@@ -29,6 +31,62 @@ function FadeInModalContent({ onClose }) {
       easing: Easing.out(Easing.ease),
     });
   }, []);
+
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await SecureStore.getItemAsync("token");
+      if (token) {
+        const res = await fetch(`${HOST_URL}/api/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+          setIsLoggedIn(true);
+        } else {
+          await SecureStore.deleteItemAsync("token");
+        }
+      } else {
+        setIsLoggedIn(false);
+        await SecureStore.deleteItemAsync("token");
+        router.push("/(auth)/sign-in");
+      }
+    };
+
+    checkToken();
+  }, []);
+
+  const handleLogout = async () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            const token = await SecureStore.getItemAsync("token");
+            const res = await fetch(`${HOST_URL}/api/user/logout`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            if (res.ok) {
+              setIsLoggedIn(false);
+              await SecureStore.deleteItemAsync("token");
+              const data = await res.json();
+              console.log(data, "data");
+            }
+            console.log("✅ Sign out successful");
+          } catch (error) {
+            console.error("❌ Error during sign out:", error.message);
+          }
+        },
+      },
+    ]);
+  };
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -72,14 +130,14 @@ function FadeInModalContent({ onClose }) {
             style={[homeStyles.modalButton, { marginTop: 15 }]}
             onPress={() => {
               onClose();
-              isSignedIn ? signOut() : router.push("/(auth)/sign-in");
+              isLoggedIn ? handleLogout() : router.push("/(auth)/sign-in");
             }}
           >
             <Animated.Text
               entering={FadeInDown.delay(300).duration(300).springify()}
               style={homeStyles.modalButtonText}
             >
-              { isSignedIn ? 'Logout' : 'Login' }
+              {isLoggedIn ? "Logout" : "Login"}
             </Animated.Text>
           </TouchableOpacity>
         </View>

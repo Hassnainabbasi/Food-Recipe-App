@@ -21,7 +21,7 @@ const AdminRecipeCard = ({ recipe }) => {
         />
         <View style={recipeCardStyles.imageOverlay} />
         <View style={recipeCardStyles.overlayTextContainer}>
-          <Text style={recipeCardStyles.title} numberOfLines={2}>
+          <Text style={recipeCardStyles.titleAdmin} numberOfLines={2}>
             {recipe.title}
           </Text>
         </View>
