@@ -1,29 +1,20 @@
-import { useEffect, useState } from "react";
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Animated, { FadeInDown, FadeOut, Layout } from "react-native-reanimated";
-import { ApiUrl } from "../../constant/api";
-import { homeStyles } from "../../assets/styles/homes.styles";
 import { Ionicons } from "@expo/vector-icons";
-import { COLORS } from "../../constant/color";
-import AdminRecipeCard from "../../components/AdminRecipeCard";
+import { useEffect, useState } from "react";
+import { FlatList, Text, View } from "react-native";
+import { homeStyles } from "../../assets/styles/homes.styles";
 import ApproveRecipeCard from "../../components/ApproveRecipeCard";
+import { COLORS } from "../../constant/color";
+import { Admin_URL } from "../../services/mealApi";
 
 export default function Checkreq() {
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
     const loadData = async () => {
-      const response = await fetch(`${ApiUrl}/recipe`);
+      const response = await fetch(`${Admin_URL}`);
       const data = await response.json();
       setRecipes(data);
-       console.log(data[0].id)
+      console.log(data, "data");
     };
     loadData();
   }, []);

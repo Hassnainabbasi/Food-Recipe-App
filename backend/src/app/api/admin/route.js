@@ -10,45 +10,25 @@ export function OPTIONS() {
   return NextResponse.json({}, { status: 200, headers: corsHeaders });
 }
 
-export async function POST() {
+export async function GET() {
   try {
-    const {
-      userId,
-      title,
-      description,
-      image,
-      category,
-      servings,
-      cookTime,
-      ingredients,
-      instructions,
-    } = await req.json();
-
-    if (
-      !userId ||
-      !title ||
-      !description ||
-      !image ||
-      !category ||
-      !servings ||
-      !cookTime ||
-      !ingredients ||
-      !instructions
-    ) {
+    const recipes = await db.select().from(recipesTable);
+    if (!recipes || recipes.length === 0) {
       return NextResponse.json(
-        { message: "Missing required fields" },
-        { status: 400, headers: corsHeaders }
+        { message: "No recipes available" },
+        { status: 404, headers: corsHeaders }
       );
     }
-
-    const parsedIngredients =
-      typeof ingredients === "string" ? JSON.parse(ingredients) : ingredients;
-
-    if (!Array.isArray(parsedIngredients)) {
-      return NextResponse.json(
-        { error: "Ingredients must be an array" },
-        { status: 400, headers: corsHeaders }
-      );
-    }
-  } catch (error) {}
+    return NextResponse.json(recipes, {
+      status: 200,
+      headers: corsHeaders,
+      message: "Recipe route working",
+    });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { error: "Failed to fetch recipes" },
+      { status: 500 }
+    );
+  }
 }

@@ -1,6 +1,7 @@
 export const BASE_URL = "https://food-recipe-app-lnjg.vercel.app/api/recipe";
 export const WEB_URL = "https://food-recipe-app-lnjg.vercel.app/api/recipe";
 export const Fav_URL = "https://food-recipe-app-lnjg.vercel.app/api";
+export const Admin_URL = "https://food-recipe-app-lnjg.vercel.app/api/admin";
 
 export const MealApi = {
   searchMealsByName: async (query) => {
@@ -31,6 +32,17 @@ export const MealApi = {
   getRandomMeal: async () => {
     try {
       const res = await fetch(`${WEB_URL}/random.php`);
+      const data = await res.json();
+      return data.meals ? data.meals[0] : null;
+    } catch (e) {
+      console.log("getRandomMeal error:", e);
+      return null;
+    }
+  },
+
+  getAdminMeals: async () => {
+    try {
+      const res = await fetch(`${Admin_URL}`);
       const data = await res.json();
       return data.meals ? data.meals[0] : null;
     } catch (e) {

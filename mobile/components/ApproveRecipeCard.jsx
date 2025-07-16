@@ -4,7 +4,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { recipeCardStyles } from "../assets/styles/homes.styles";
 
 const ApproveRecipeCard = ({ recipe }) => {
-  const router = useRouter();
+  const router = useRouter(); 
+  console.log(recipe);
 
   return (
     <TouchableOpacity
