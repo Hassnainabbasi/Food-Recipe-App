@@ -1,7 +1,7 @@
 import { db } from "../../../config/drizzle";
 import { recipesTable } from "../../../db/schema";
 import { NextResponse } from "next/server";
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

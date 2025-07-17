@@ -4,10 +4,12 @@ import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { recipeCardStyles } from "../assets/styles/homes.styles";
 import { recipeDetailStyles } from "../assets/styles/recipe-detail.styles";
+import { Ionicons } from "@expo/vector-icons";
+import { COLORS } from "../constant/color";
 
 const ApproveRecipeCard = ({ recipe }) => {
   const router = useRouter();
-  console.log(recipe,'recipe');
+  console.log(recipe, "recipe");
   return (
     <TouchableOpacity
       style={recipeCardStyles.adminContainer}
@@ -25,21 +27,21 @@ const ApproveRecipeCard = ({ recipe }) => {
           colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.9)"]}
           style={recipeDetailStyles.gradientOverlay}
         />
-        {/* {recipe?.status && (
+        {recipe?.status && (
           <View style={recipeDetailStyles.recipeStatus}>
             <Text style={{ fontSize: 10, fontWeight: "700", color: "#000" }}>
               {recipe?.status.toUpperCase()}
             </Text>
           </View>
-        )} */}
-        {/* <View style={recipeDetailStyles.floatingButtons}>
+        )}
+        <View style={recipeDetailStyles.floatingButtons}>
           <TouchableOpacity
             style={recipeDetailStyles.floatingButton}
             onPress={() => router.back()}
           >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </TouchableOpacity>
-        </View> */}
+        </View>
         <View style={recipeCardStyles.imageOverlay} />
         <View style={recipeCardStyles.overlayTextContainer}>
           <Text style={recipeCardStyles.titleAdmin} numberOfLines={2}>
