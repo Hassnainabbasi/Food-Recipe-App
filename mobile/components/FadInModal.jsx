@@ -77,7 +77,6 @@ function FadeInModalContent({ onClose }) {
               setIsLoggedIn(false);
               await SecureStore.deleteItemAsync("token");
               const data = await res.json();
-              console.log(data, "data");
             }
             console.log("✅ Sign out successful");
           } catch (error) {

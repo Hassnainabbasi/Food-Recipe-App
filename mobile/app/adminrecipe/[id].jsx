@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { recipeDetailStyles } from "../../assets/styles/recipe-detail.styles";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { COLORS } from "../../constant/color";
@@ -59,7 +59,7 @@ export default function RecipeDetailPage() {
         if (mealData) {
           const tranformData = MealApi.transformMealData(mealData);
           setRecipe(tranformData);
-          console.log(tranformData, "transfromData"); 
+          console.log(tranformData, "transfromData");
         }
       } catch (error) {
         console.log(error.message, "loadDetail ka ");
@@ -70,12 +70,30 @@ export default function RecipeDetailPage() {
     loadRecipeDetail();
   }, [recipeId, userId]);
 
-  const handleApprove = (id) => {
-    setRecipes((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const handleCancel = (id) => {
-    setRecipes((prev) => prev.filter((item) => item.id !== id));
+  const updateStatus = async () => {
+    setIsSaving(true);
+    try {
+      const token = await SecureStore.getItemAsync("token");
+      const res = await fetch(`${HOST_URL}/api/admin/recipe-status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ id: recipeId, status }),
+      });
+      if (res.ok) {
+        Alert.alert("Success", `Recipe ${status}`);
+        router.back();
+      } else {
+        Alert.alert("Error", "Failed to update status");
+      }
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "Something went wrong");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (loading) return <LoadingSpinner />;
@@ -196,11 +214,6 @@ export default function RecipeDetailPage() {
                 <Ionicons name="book" size={16} color={COLORS.white} />
               </LinearGradient>
               <Text style={recipeDetailStyles.sectionTitle}>Instructions</Text>
-              <View style={recipeDetailStyles.countBadge}>
-                <Text style={recipeDetailStyles.countText}>
-                  {recipe.instructions}
-                </Text>
-              </View>
             </View>
             <View style={recipeDetailStyles.instructionsContainer}>
               {recipe?.instructions.map((instruction, index) => (
@@ -235,6 +248,34 @@ export default function RecipeDetailPage() {
                 </View>
               ))}
             </View>
+          </View>
+          <View style={recipeDetailStyles.adminApproveContainer}>
+            <TouchableOpacity
+              style={recipeDetailStyles.primaryButton}
+              disabled={isSaving}
+              onPress={() => updateRecipeStatus("approved")}
+            >
+              <LinearGradient
+                colors={[COLORS.primary, COLORS.primary + "CC"]}
+                style={recipeDetailStyles.buttonGradient}
+              >
+                <Ionicons name="checkmark" size={20} color={COLORS.white} />
+                <Text style={recipeDetailStyles.buttonText}>Approve</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={recipeDetailStyles.primaryButton}
+              disabled={isSaving}
+              onPress={() => updateRecipeStatus("approved")}
+            >
+              <LinearGradient
+                colors={[COLORS.primary, COLORS.primary + "CC"]}
+                style={recipeDetailStyles.buttonGradient}
+              >
+                <Ionicons name="close" size={20} color={COLORS.white} />
+                <Text style={recipeDetailStyles.buttonText}>Reject</Text>
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>

@@ -35,7 +35,7 @@ export const MealApi = {
     try {
       const res = await fetch(`${Admin_Single_Url}/lookup.php?i=${id}`);
       const data = await res.json();
-      // console.log(data, "getMealByAdminId");
+      console.log(data, "getMealByAdminId");
       return data.meals ? data.meals[0] : null;
     } catch (e) {
       console.log("getMealById error:", e);
@@ -116,37 +116,26 @@ export const MealApi = {
   },
   transformMealData: (meal) => {
     if (!meal) return null;
-    const ingredients = [];
-    for (let i = 1; i <= 20; i++) {
-      const ingredient = meal[`ingredient${i}`];
-      const measure = meal[`strMeasure${i}`];
-      if (ingredient && ingredient.trim()) {
-        const measureText =
-          measure && measure.trim() ? `${measure.trim()}` : "";
-        ingredients.push(`${measureText}${ingredient.trim()}`);
-      }
-    }
-    const instructions = meal.instructions
-      ? meal.instructions.split(/\r?\n/).filter((step) => step.trim())
+    const ingredients = Array.isArray(meal.ingredients)
+      ? meal.ingredients.map((ing) => ing.en || "")
       : [];
 
     return {
       id: meal.id,
       title: meal.title,
-      title_json: meal.title_json,
       description: meal.description
         ? meal.description.substring(0, 120) + "..."
         : "Delicious meal from Recipe",
-      description_json: meal.description_json,
       image: meal.image,
       cookTime: meal.cookTime,
       servings: meal.servings,
       category: meal.category,
-      category_json: meal.category_json,
-      area: meal.ingredients,
+      area: meal.area?.[0]?.en || "",
       originalData: meal,
-      instructions: meal.instructions,  
-      instructions_json: meal.instructions_json,
+      instructions: meal.instructions
+        ? meal.instructions.split(/\r?\n/).filter((line) => line.trim() !== "")
+        : [],
+      ingredients,
     };
   },
 };

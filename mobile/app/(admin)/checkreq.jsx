@@ -14,7 +14,6 @@ export default function Checkreq() {
       const response = await fetch(`${Admin_URL}`);
       const data = await response.json();
       setRecipes(data);
-      console.log(data, "data");
     };
     loadData();
   }, []);

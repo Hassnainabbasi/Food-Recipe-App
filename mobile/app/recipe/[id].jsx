@@ -36,7 +36,6 @@ export default function RecipeDetailPage() {
         });
         if (res.ok) {
           const data = await res.json();
-          console.log(data,'this data new user recipe')
           setUser(data.user);
           setIsLoggedIn(true);
         } else {
@@ -54,7 +53,6 @@ export default function RecipeDetailPage() {
 
   useEffect(() => {
     if (!recipeId) return;
-    console.log(recipe?.youtubeUrl);
 
     getYoutubeUrl();
     const checkIfSaved = async () => {
@@ -77,7 +75,6 @@ export default function RecipeDetailPage() {
       setLoading(true);
       try {
         const mealData = await MealApi.getMealById(recipeId);
-        console.log(mealData, "meal data");
         setRecipe(mealData);
       } catch (error) {
         console.log(error.message, "loadDetail ka ");

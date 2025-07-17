@@ -96,7 +96,6 @@ export default function CreateRecipeScreen() {
       });
       formData.append("upload_preset", "Food Recipe");
       formData.append("cloud_name", "djmfadch8");
-      console.log("formData", formData);
       try {
         const res = await fetch(
           "https://api.cloudinary.com/v1_1/djmfadch8/image/upload",
@@ -113,9 +112,7 @@ export default function CreateRecipeScreen() {
         }
 
         const imageData = await res.json();
-        console.log("imageData", imageData);
         imageUrl = imageData.secure_url;
-        console.log(imageUrl, "imageUrl");
       } catch (error) {
         console.log(error.message);
       }
@@ -141,8 +138,6 @@ export default function CreateRecipeScreen() {
 
       if (!response.ok) throw new Error("Failed to Add Recipe");
       const result = await response.json();
-      console.log(response, "response");
-      console.log(result, "data");
     } catch (e) {
       console.log(e.message);
     } finally {

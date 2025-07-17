@@ -8,6 +8,9 @@ export const recipeDetailStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  adminApproveContainer: {
+   display: 'flex',
+  },
   headerContainer: {
     height: height * 0.5,
     position: "relative",
