@@ -10,9 +10,10 @@ const corsHeaders = {
 };
 
 export async function GET(req) {
+  console.log("Request received");
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("i");
-
+  console.log(id,'id')
   if (!id) {
     return NextResponse.json(
       { error: "Missing ID" },
@@ -24,12 +25,7 @@ export async function GET(req) {
     const result = await db
       .select()
       .from(recipesTable)
-      .where(
-        and(
-          eq(recipesTable.id, id),
-          eq(recipesTable.status, "approved")
-        )
-      )
+      .where(and(eq(recipesTable.id, id), eq(recipesTable.status, "approved")))
       .limit(1);
 
     return NextResponse.json(

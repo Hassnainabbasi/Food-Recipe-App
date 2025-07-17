@@ -4,10 +4,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { recipeDetailStyles } from "../../assets/styles/recipe-detail.styles";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { ApiUrl } from "../../constant/api";
 import { COLORS } from "../../constant/color";
 import { HOST_URL } from "../../constant/constant";
 import { Fav_URL, MealApi } from "../../services/mealApi";
@@ -17,6 +16,7 @@ export default function RecipeDetailPage() {
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
+  const [recipes, setRecipes] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
   const [user, setUser] = useState(null);
@@ -33,7 +33,6 @@ export default function RecipeDetailPage() {
         });
         if (res.ok) {
           const data = await res.json();
-          console.log(data, "this data new user recipe");
           setUser(data.user);
           setIsLoggedIn(true);
         } else {
@@ -52,28 +51,15 @@ export default function RecipeDetailPage() {
   useEffect(() => {
     if (!userId || !recipeId) return;
 
-    const checkIfSaved = async () => {
-      try {
-        const response = await fetch(`${Fav_URL}/favorites/${userId}`);
-        const data = await response.json();
-        const savedRecipeIds = data.some(
-          (fav) => fav.recipeId === parseInt(recipeId)
-        );
-        setIsSaved(savedRecipeIds);
-      } catch (error) {
-        console.log(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
     const loadRecipeDetail = async () => {
       setLoading(true);
       try {
         const mealData = await MealApi.getMealById(recipeId);
+        console.log(recipeId, 'recipeID');
         if (mealData) {
           const tranformData = MealApi.transformMealData(mealData);
           setRecipe(tranformData);
-          console.log(tranformData,'transfromData')
+          // console.log(tranformData, "transfromData");
         }
       } catch (error) {
         console.log(error.message, "loadDetail ka ");
@@ -81,45 +67,15 @@ export default function RecipeDetailPage() {
         setLoading(false);
       }
     };
-    checkIfSaved();
     loadRecipeDetail();
   }, [recipeId, userId]);
 
-  const handleToggleSaved = async () => {
-    setIsSaving(true);
-    if (isSaved) {
-      const res = await fetch(`${ApiUrl}/favorites/${userId}/${recipeId}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed to remove recipe");
-      setIsSaved(false);
-    } else {
-      try {
-        const data = {  
-          userId,
-          recipeId: Number(recipeId),
-          title: recipe.title,
-          image: recipe.image,
-          cookTime: recipe.cookTime,
-          servings: recipe.servings,
-        };
-        console.log(data, "this data");
-        const res = await fetch(`${ApiUrl}/favorites`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-        if (!res.ok) throw new Error("Failed to add recipe");
-        setIsSaved(true);
-      } catch (error) {
-        console.log(error.message);
-        Alert.alert(" Error", "Failed to save recipe");
-      } finally {
-        setIsSaving(false);
-      }
-    }
+  const handleApprove = (id) => {
+    setRecipes((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleCancel = (id) => {
+    setRecipes((prev) => prev.filter((item) => item.id !== id));
   };
 
   if (loading) return <LoadingSpinner />;
@@ -146,34 +102,14 @@ export default function RecipeDetailPage() {
             >
               <Ionicons name="arrow-back" size={24} color={COLORS.white} />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                recipeDetailStyles.floatingButton,
-                { backgroundColor: isSaving ? COLORS.gray : COLORS.primary },
-              ]}
-              onPress={handleToggleSaved}
-              disabled={isSaving}
-            >
-              <Ionicons
-                name={
-                  isSaving
-                    ? "hourglass"
-                    : isSaved
-                    ? "bookmark"
-                    : "bookmark-outline"
-                }
-                color={COLORS.white}
-                size={24}
-              />
-            </TouchableOpacity>
           </View>
           <View style={recipeDetailStyles.titleSection}>
             <View style={recipeDetailStyles.categoryBadge}>
               <Text style={recipeDetailStyles.categoryText}>
-                {recipe.category}
+                {recipe?.category}
               </Text>
             </View>
-            <Text style={recipeDetailStyles.recipeTitle}>{recipe.title}</Text>
+            <Text style={recipeDetailStyles.recipeTitle}>{recipe?.title}</Text>
             {recipe?.area && (
               <View style={recipeDetailStyles.locationRow}>
                 <Ionicons
@@ -182,7 +118,7 @@ export default function RecipeDetailPage() {
                   color={COLORS.white}
                 />
                 <Text style={recipeDetailStyles.locationText}>
-                  {recipe.area} Cuisine
+                  {recipe?.area} Cuisine
                 </Text>
               </View>
             )}
@@ -198,7 +134,7 @@ export default function RecipeDetailPage() {
                 <Ionicons name="time" size={20} color={COLORS.white} />
               </LinearGradient>
               <Text style={recipeDetailStyles.statValue}>
-                {recipe.cookTime}
+                {recipe?.cookTime}
               </Text>
               <Text style={recipeDetailStyles.statLabel}>Prep Time</Text>
             </View>
@@ -211,7 +147,7 @@ export default function RecipeDetailPage() {
                 <Ionicons name="people" size={20} color={COLORS.white} />
               </LinearGradient>
               <Text style={recipeDetailStyles.statValue}>
-                {recipe.servings}
+                {recipe?.servings}
               </Text>
               <Text style={recipeDetailStyles.statLabel}>Servings</Text>
             </View>
@@ -227,13 +163,13 @@ export default function RecipeDetailPage() {
               <Text style={recipeDetailStyles.sectionTitle}>Ingredients</Text>
               <View style={recipeDetailStyles.countBadge}>
                 <Text style={recipeDetailStyles.countText}>
-                  {recipe.ingredients.length}
+                  {recipe?.ingredients.length}
                 </Text>
               </View>
             </View>
           </View>
           <View style={recipeDetailStyles.ingredientsGrid}>
-            {recipe.ingredients.map((ing, index) => (
+            {recipe?.ingredients.map((ing, index) => (
               <View key={ing} style={recipeDetailStyles.ingredientCard}>
                 <View style={recipeDetailStyles.ingredientNumber}>
                   <Text style={recipeDetailStyles.ingredientNumberText}>
@@ -262,12 +198,12 @@ export default function RecipeDetailPage() {
               <Text style={recipeDetailStyles.sectionTitle}>Instructions</Text>
               <View style={recipeDetailStyles.countBadge}>
                 <Text style={recipeDetailStyles.countText}>
-                  {recipe.instructions.length}
+                  {recipe?.instructions.length}
                 </Text>
               </View>
             </View>
             <View style={recipeDetailStyles.instructionsContainer}>
-              {recipe.instructions.map((instruction, index) => (
+              {recipe?.instructions.map((instruction, index) => (
                 <View key={index} style={recipeDetailStyles.instructionCard}>
                   <LinearGradient
                     colors={[COLORS.primary, COLORS.primary + "CC"]}
@@ -300,21 +236,6 @@ export default function RecipeDetailPage() {
               ))}
             </View>
           </View>
-          <TouchableOpacity
-            style={recipeDetailStyles.primaryButton}
-            onPress={handleToggleSaved}
-            disabled={isSaving}
-          >
-            <LinearGradient
-              colors={[COLORS.primary, COLORS.primary + "CC"]}
-              style={recipeDetailStyles.buttonGradient}
-            >
-              <Ionicons name="heart" size={20} color={COLORS.white} />
-              <Text style={recipeDetailStyles.buttonText}>
-                {isSaved ? "Remove from Favorites" : "Add to Favorites"}
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>

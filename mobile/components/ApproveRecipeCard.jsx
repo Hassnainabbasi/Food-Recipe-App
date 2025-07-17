@@ -10,7 +10,7 @@ const ApproveRecipeCard = ({ recipe }) => {
   return (
     <TouchableOpacity
       style={recipeCardStyles.adminContainer}
-      onPress={() => router.push(`/recipe/${recipe.id}`)}
+      onPress={() => router.push(`/adminrecipe/${recipe.id}`)}
       activeOpacity={0.8}
     >
       <View style={recipeCardStyles.imageContainer}>
@@ -21,7 +21,7 @@ const ApproveRecipeCard = ({ recipe }) => {
           transition={300}
         />
         <View style={recipeCardStyles.imageOverlay} />
-        <View style={recipeCardStyles.overlayTextContainer}>
+        <View style={recipeCardStyles.overlayTextContainer}> 
           <Text style={recipeCardStyles.title} numberOfLines={2}>
             {recipe.title}
           </Text>

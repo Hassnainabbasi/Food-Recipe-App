@@ -61,18 +61,3 @@ export const revokedTokensTable = pgTable("revoked_tokens", {
   token: varchar("token", { length: 512 }).notNull(),
   expiredAt: timestamp("expiredAt").notNull(),
 });
-
-export const adminTable = pgTable("admin", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  description: text("description"),
-  image: text("image"),
-  ingredients: jsonb("ingredients").notNull(),
-  instructions: text("instructions"),
-  servings: text("servings"),
-  cookTime: text("cook_time"),
-  createdAt: timestamp("created_at").defaultNow(),
-  userId: text("user_id").notNull(),
-  category: text("category").notNull(),
-  status: text("status").default("pending").notNull(),
-});
