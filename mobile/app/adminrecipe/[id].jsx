@@ -75,7 +75,7 @@ export default function RecipeDetailPage() {
     try {
       const token = await SecureStore.getItemAsync("token");
       const res = await fetch(`${HOST_URL}/api/admin/status`, {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
