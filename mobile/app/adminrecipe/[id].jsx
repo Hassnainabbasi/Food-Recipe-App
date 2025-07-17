@@ -9,7 +9,7 @@ import { recipeDetailStyles } from "../../assets/styles/recipe-detail.styles";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { COLORS } from "../../constant/color";
 import { HOST_URL } from "../../constant/constant";
-import { Fav_URL, MealApi } from "../../services/mealApi";
+import { MealApi } from "../../services/mealApi";
 
 export default function RecipeDetailPage() {
   const { id: recipeId } = useLocalSearchParams();
@@ -54,8 +54,8 @@ export default function RecipeDetailPage() {
     const loadRecipeDetail = async () => {
       setLoading(true);
       try {
-        const mealData = await MealApi.getMealById(recipeId);
-        console.log(recipeId, 'recipeID');
+        const mealData = await MealApi.getMealByAdminId(recipeId);
+        console.log(recipeId, "recipeID");
         if (mealData) {
           const tranformData = MealApi.transformMealData(mealData);
           setRecipe(tranformData);

@@ -2,6 +2,7 @@ export const BASE_URL = "https://food-recipe-app-lnjg.vercel.app/api/recipe";
 export const WEB_URL = "https://food-recipe-app-lnjg.vercel.app/api/recipe";
 export const Fav_URL = "https://food-recipe-app-lnjg.vercel.app/api";
 export const Admin_URL = "https://food-recipe-app-lnjg.vercel.app/api/admin";
+export const Admin_Single_Url = "https://food-recipe-app-lnjg.vercel.app/api/admin";
 
 export const MealApi = {
   searchMealsByName: async (query) => {
@@ -19,6 +20,18 @@ export const MealApi = {
   },
 
   getMealById: async (id) => {
+    try {
+      const res = await fetch(`${WEB_URL}/lookup.php?i=${id}`);
+      const data = await res.json();
+      console.log(data, "getMealById");
+      return data.meals ? data.meals[0] : null;
+    } catch (e) {
+      console.log("getMealById error:", e);
+      return null;
+    }
+  },
+
+  getMealByAdminId: async (id) => {
     try {
       const res = await fetch(`${WEB_URL}/lookup.php?i=${id}`);
       const data = await res.json();
