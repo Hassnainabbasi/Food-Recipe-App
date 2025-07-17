@@ -331,7 +331,7 @@ const HomeScreen = () => {
             <Text style={homeStyles.sectionTitle}>{selectCategory}</Text>
           </View>
         </View>
-        {recipes.length > 0 ? (
+        {recipes?.length > 0 ? (
           <FlatList
             data={recipes}
             renderItem={({ item }) => <RecipeCard recipe={item} />}

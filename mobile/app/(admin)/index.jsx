@@ -2,7 +2,6 @@ import { useClerk } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import {
-  Alert,
   FlatList,
   Modal,
   ScrollView,
@@ -19,7 +18,6 @@ import FadeInModalContent from "../../components/FadInModal";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { COLORS } from "../../constant/color";
 import { MealApi } from "../../services/mealApi";
-import { HOST_URL } from "../../constant/constant";
 
 export default function index() {
   const [selectCategory, setSelectCategory] = useState(null);
@@ -106,7 +104,7 @@ export default function index() {
           )}
         </View>
         <View>
-          {recipes.length > 0 ? (
+          {recipes?.length > 0 ? (
             <FlatList
               data={recipes}
               renderItem={({ item }) => <AdminRecipeCard recipe={item} />}

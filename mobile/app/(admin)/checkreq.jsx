@@ -7,7 +7,7 @@ import { COLORS } from "../../constant/color";
 import { Admin_URL } from "../../services/mealApi";
 
 export default function Checkreq() {
-  const [recipes, setRecipes] = useState([]);
+  const [recipes, setRecipes] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,8 +17,9 @@ export default function Checkreq() {
         const response = await fetch(`${Admin_URL}`);
         const data = await response.json();
         setRecipes(data);
+        console.log(data);
       } catch (error) {
-        setRecipes([]);
+        setRecipes(null);
         console.log(error.message);
       } finally {
         setLoading(false);
@@ -26,9 +27,12 @@ export default function Checkreq() {
     };
     loadData();
   }, []);
+
+  if (loading) return <LoadingSpinner />;
+
   return (
     <View>
-      {recipes.length > 0 ? (
+      {recipes?.length > 0 ? (
         <FlatList
           data={recipes}
           renderItem={({ item }) => <ApproveRecipeCard recipe={item} />}

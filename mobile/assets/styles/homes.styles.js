@@ -356,7 +356,7 @@ export const recipeCardStyles = StyleSheet.create({
     display: "flex",
     alignSelf: "center",
     paddingHorizontal: 10,
-    paddingVertical: 5
+    paddingVertical: 5,
   },
   imageOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -377,7 +377,7 @@ export const recipeCardStyles = StyleSheet.create({
     marginBottom: 4,
     // lineHeight: 20,
   },
-  titleAdmin : {
+  titleAdmin: {
     fontSize: 15,
     fontWeight: "700",
     color: COLORS.white,
@@ -405,9 +405,9 @@ export const recipeCardStyles = StyleSheet.create({
     fontWeight: "500",
   },
   servingsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 10
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
   },
   servingsText: {
     fontSize: 11,

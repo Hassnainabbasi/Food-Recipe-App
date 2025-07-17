@@ -9,7 +9,22 @@ export const recipeDetailStyles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   adminApproveContainer: {
-   display: 'flex',
+    display: "flex",
+  },
+  recipeStatus: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor:
+      recipe.status === "approved"
+        ? "#4ade80"
+        : recipe.status === "rejected"
+        ? "#f87171"
+        : "#facc15",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    zIndex: 10,
   },
   headerContainer: {
     height: height * 0.5,
@@ -165,7 +180,7 @@ export const recipeDetailStyles = StyleSheet.create({
     color: COLORS.text,
     flex: 1,
     marginTop: 32,
-    paddingHorizontal: 2
+    paddingHorizontal: 2,
   },
   countBadge: {
     backgroundColor: COLORS.primary + "20",
@@ -293,7 +308,7 @@ export const recipeDetailStyles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 4,
-    marginTop: 20
+    marginTop: 20,
   },
   buttonGradient: {
     flexDirection: "row",
