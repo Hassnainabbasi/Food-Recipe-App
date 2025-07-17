@@ -70,11 +70,11 @@ export default function RecipeDetailPage() {
     loadRecipeDetail();
   }, [recipeId, userId]);
 
-  const updateStatus = async () => {
+  const updateStatus = async (status) => {
     setIsSaving(true);
     try {
       const token = await SecureStore.getItemAsync("token");
-      const res = await fetch(`${HOST_URL}/api/admin/recipe-status`, {
+      const res = await fetch(`${HOST_URL}/api/admin/status`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -253,7 +253,7 @@ export default function RecipeDetailPage() {
             <TouchableOpacity
               style={recipeDetailStyles.primaryButton}
               disabled={isSaving}
-              onPress={() => updateRecipeStatus("approved")}
+              onPress={() => updateStatus("approve")}
             >
               <LinearGradient
                 colors={[COLORS.primary, COLORS.primary + "CC"]}
@@ -266,7 +266,7 @@ export default function RecipeDetailPage() {
             <TouchableOpacity
               style={recipeDetailStyles.primaryButton}
               disabled={isSaving}
-              onPress={() => updateRecipeStatus("approved")}
+              onPress={() => updateStatus("reject")}
             >
               <LinearGradient
                 colors={[COLORS.primary, COLORS.primary + "CC"]}

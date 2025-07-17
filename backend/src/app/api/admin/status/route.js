@@ -11,7 +11,7 @@ export async function PATCH(req) {
   } 
 
   try {
-    await db
+    await db 
       .update(recipesTable)
       .set({ status })
       .where(eq(recipesTable.id, id));
