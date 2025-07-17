@@ -74,14 +74,19 @@ export default function RecipeDetailPage() {
     setIsSaving(true);
     try {
       const token = await SecureStore.getItemAsync("token");
-      const res = await fetch(`${HOST_URL}/api/admin/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: recipeId, status }),
-      });
-       console.log(res,'response')
+      const res = await fetch(
+        `http://192.168.0.111:3000/api/admin/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: recipeId, status }),
+        }
+      );
+      console.log(res, "response");
+      const data = await res.json();
+      console.log(data);
       if (res.ok) {
         Alert.alert("Success", `Recipe ${status}`);
         router.back();
@@ -253,7 +258,7 @@ export default function RecipeDetailPage() {
             <TouchableOpacity
               style={recipeDetailStyles.primaryButton}
               disabled={isSaving}
-              onPress={() => updateStatus("approve")}
+              onPress={() => updateStatus("approved")}
             >
               <LinearGradient
                 colors={[COLORS.primary, COLORS.primary + "CC"]}

@@ -8,24 +8,24 @@ import { Admin_URL } from "../../services/mealApi";
 
 export default function Checkreq() {
   const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const loadData = async () => {
-      const response = await fetch(`${Admin_URL}`);
-      const data = await response.json();
-      setRecipes(data);
+      try {
+        const response = await fetch(`${Admin_URL}`);
+        const data = await response.json();
+        setRecipes(data);
+      } catch (error) {
+        setRecipes([]);
+        console.log(error.message);
+      } finally {
+        setLoading(false);
+      }
     };
     loadData();
   }, []);
-
-  const handleApprove = (id) => {
-    setRecipes((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const handleCancel = (id) => {
-    setRecipes((prev) => prev.filter((item) => item.id !== id));
-  };
-
   return (
     <View>
       {recipes.length > 0 ? (
