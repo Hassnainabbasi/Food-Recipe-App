@@ -8,16 +8,17 @@ export async function PATCH(req) {
 
   if (!["approved", "rejected"].includes(status)) {
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
-  } 
+  }
 
   try {
-    await db 
+    await db
       .update(recipesTable)
       .set({ status })
       .where(eq(recipesTable.id, id));
 
     return NextResponse.json({ message: `Recipe ${status}` });
   } catch (error) {
+    console.log(error.message, "error");
     return NextResponse.json(
       { error: "Failed to update status" },
       { status: 500 }

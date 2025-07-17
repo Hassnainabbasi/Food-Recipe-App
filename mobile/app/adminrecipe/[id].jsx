@@ -78,10 +78,10 @@ export default function RecipeDetailPage() {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ id: recipeId, status }),
       });
+       console.log(res,'response')
       if (res.ok) {
         Alert.alert("Success", `Recipe ${status}`);
         router.back();
@@ -89,7 +89,7 @@ export default function RecipeDetailPage() {
         Alert.alert("Error", "Failed to update status");
       }
     } catch (err) {
-      console.error(err);
+      console.error(err.message);
       Alert.alert("Error", "Something went wrong");
     } finally {
       setIsSaving(false);
