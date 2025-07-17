@@ -1,4 +1,3 @@
-import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -10,6 +9,8 @@ import { recipeDetailStyles } from "../../assets/styles/recipe-detail.styles";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { COLORS } from "../../constant/color";
 import { BASE_URL, Fav_URL, MealApi, WEB_URL } from "../../services/mealApi";
+import * as SecureStore from "expo-secure-store";
+import { HOST_URL } from "../../constant/constant";
 
 export default function RecipeDetailPage() {
   const { id: recipeId } = useLocalSearchParams();
@@ -18,15 +19,41 @@ export default function RecipeDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [user, setUser] = useState(null);
   const router = useRouter();
-  const { user, isLoaded } = useUser();
   const userId = user?.id;
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
-  if (!isLoaded) return <LoadingSpinner />;
 
   useEffect(() => {
-    if (!userId || !recipeId) return;
+    const checkToken = async () => {
+      const token = await SecureStore.getItemAsync("token");
+      if (token) {
+        const res = await fetch(`${HOST_URL}/api/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          console.log(data,'this data new user recipe')
+          setUser(data.user);
+          setIsLoggedIn(true);
+        } else {
+          await SecureStore.deleteItemAsync("token");
+        }
+      } else {
+        setIsLoggedIn(false);
+        await SecureStore.deleteItemAsync("token");
+        router.push("/(auth)/sign-in");
+      }
+    };
+
+    checkToken();
+  }, []);
+
+  useEffect(() => {
+    if (!recipeId) return;
     console.log(recipe?.youtubeUrl);
 
     getYoutubeUrl();

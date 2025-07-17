@@ -1,6 +1,6 @@
 import { db } from "../../../config/drizzle";
 import { recipesTable } from "../../../db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 const corsHeaders = {
@@ -40,7 +40,7 @@ export async function GET(req) {
       }
     );
   } catch (error) {
-    console.error("Lookup error:", error);
+    console.error("Lookup error:", error.message);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500, headers: corsHeaders }

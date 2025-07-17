@@ -1,16 +1,16 @@
-import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import WebView from "react-native-webview";
 import { recipeDetailStyles } from "../../assets/styles/recipe-detail.styles";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { ApiUrl } from "../../constant/api";
 import { COLORS } from "../../constant/color";
-import { MealApi } from "../../services/mealApi";
+import { HOST_URL } from "../../constant/constant";
+import { Fav_URL, MealApi } from "../../services/mealApi";
 
 export default function RecipeDetailPage() {
   const { id: recipeId } = useLocalSearchParams();
@@ -19,26 +19,49 @@ export default function RecipeDetailPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
-  const { user, isLoaded } = useUser();
+  const [user, setUser] = useState(null);
   const userId = user?.id;
 
-  if (!isLoaded) return <LoadingSpinner />;
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await SecureStore.getItemAsync("token");
+      if (token) {
+        const res = await fetch(`${HOST_URL}/api/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          console.log(data, "this data new user recipe");
+          setUser(data.user);
+          setIsLoggedIn(true);
+        } else {
+          await SecureStore.deleteItemAsync("token");
+        }
+      } else {
+        setIsLoggedIn(false);
+        await SecureStore.deleteItemAsync("token");
+        router.push("/(auth)/sign-in");
+      }
+    };
+
+    checkToken();
+  }, []);
 
   useEffect(() => {
     if (!userId || !recipeId) return;
-    console.log(recipe?.youtubeUrl);
 
-    getYoutubeUrl();
     const checkIfSaved = async () => {
       try {
-        const response = await fetch(`${ApiUrl}/favorites/${userId}`);
+        const response = await fetch(`${Fav_URL}/favorites/${userId}`);
         const data = await response.json();
         const savedRecipeIds = data.some(
           (fav) => fav.recipeId === parseInt(recipeId)
         );
         setIsSaved(savedRecipeIds);
       } catch (error) {
-        console.log(error.message, "chexk ka");
+        console.log(error.message);
       } finally {
         setLoading(false);
       }
@@ -49,11 +72,8 @@ export default function RecipeDetailPage() {
         const mealData = await MealApi.getMealById(recipeId);
         if (mealData) {
           const tranformData = MealApi.transformMealData(mealData);
-          const recipevideo = {
-            ...tranformData,
-            youtubeUrl: mealData.strYoutube || null,
-          };
-          setRecipe(recipevideo);
+          setRecipe(tranformData);
+          console.log(tranformData,'transfromData')
         }
       } catch (error) {
         console.log(error.message, "loadDetail ka ");
@@ -65,15 +85,6 @@ export default function RecipeDetailPage() {
     loadRecipeDetail();
   }, [recipeId, userId]);
 
-  const getYoutubeUrl = (url) => {
-    if (!url || typeof url !== "string") return null;
-    const videoId = url.split("v=")[1]?.split("&")[0];
-    if (!videoId) return null;
-    const urls = `https://www.youtube.com/embed/${videoId}`;
-    console.log(urls, "youtube ka");
-    return urls;
-  };
-
   const handleToggleSaved = async () => {
     setIsSaving(true);
     if (isSaved) {
@@ -84,7 +95,7 @@ export default function RecipeDetailPage() {
       setIsSaved(false);
     } else {
       try {
-        const data = {
+        const data = {  
           userId,
           recipeId: Number(recipeId),
           title: recipe.title,
@@ -205,29 +216,6 @@ export default function RecipeDetailPage() {
               <Text style={recipeDetailStyles.statLabel}>Servings</Text>
             </View>
           </View>
-          {recipe?.youtubeUrl && (
-            <View style={recipeDetailStyles.sectionContainer}>
-              <View style={recipeDetailStyles.sectionTitleRow}>
-                <LinearGradient
-                  colors={["#FF0000", "#CC0000"]}
-                  style={recipeDetailStyles.sectionIcon}
-                >
-                  <Ionicons name="play" size={16} color={COLORS.white} />
-                </LinearGradient>
-                <Text style={recipeDetailStyles.sectionTitle}>
-                  Video Tutorial
-                </Text>
-              </View>
-              <View style={recipeDetailStyles.videoCard}>
-                <WebView
-                  style={recipeDetailStyles.webview}
-                  allowsFullscreenVideo
-                  source={{ uri: getYoutubeUrl(recipe.youtubeUrl) }}
-                  mediaPlaybackRequiresUserAction={false}
-                />
-              </View>
-            </View>
-          )}
           <View style={recipeDetailStyles.sectionContainer}>
             <View style={recipeDetailStyles.sectionTitleRow}>
               <LinearGradient

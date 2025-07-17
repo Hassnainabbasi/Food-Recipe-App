@@ -22,6 +22,7 @@ export const MealApi = {
     try {
       const res = await fetch(`${WEB_URL}/lookup.php?i=${id}`);
       const data = await res.json();
+      console.log(data, "getMealById");
       return data.meals ? data.meals[0] : null;
     } catch (e) {
       console.log("getMealById error:", e);
