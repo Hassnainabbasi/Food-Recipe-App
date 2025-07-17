@@ -55,11 +55,11 @@ export default function RecipeDetailPage() {
       setLoading(true);
       try {
         const mealData = await MealApi.getMealByAdminId(recipeId);
-        console.log(recipeId, "recipeID");
+        // console.log(recipeId, "recipeID");
         if (mealData) {
           const tranformData = MealApi.transformMealData(mealData);
           setRecipe(tranformData);
-          // console.log(tranformData, "transfromData");
+          console.log(tranformData, "transfromData"); 
         }
       } catch (error) {
         console.log(error.message, "loadDetail ka ");
@@ -163,7 +163,7 @@ export default function RecipeDetailPage() {
               <Text style={recipeDetailStyles.sectionTitle}>Ingredients</Text>
               <View style={recipeDetailStyles.countBadge}>
                 <Text style={recipeDetailStyles.countText}>
-                  {recipe?.ingredients.length}
+                  {recipe.ingredients.length}
                 </Text>
               </View>
             </View>
@@ -198,7 +198,7 @@ export default function RecipeDetailPage() {
               <Text style={recipeDetailStyles.sectionTitle}>Instructions</Text>
               <View style={recipeDetailStyles.countBadge}>
                 <Text style={recipeDetailStyles.countText}>
-                  {recipe?.instructions.length}
+                  {recipe.instructions}
                 </Text>
               </View>
             </View>
