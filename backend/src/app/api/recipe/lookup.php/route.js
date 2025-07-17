@@ -26,7 +26,7 @@ export async function GET(req) {
       .from(recipesTable)
       .where(
         and(
-          eq(recipesTable.id, parseInt(id)),
+          eq(recipesTable.id, id),
           eq(recipesTable.status, "approved")
         )
       )
