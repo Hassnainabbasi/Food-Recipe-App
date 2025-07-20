@@ -25,17 +25,6 @@ import { COLORS } from "../../constant/color";
 import { ADMIN_EMAIL, HOST_URL } from "../../constant/constant";
 import { MealApi } from "../../services/mealApi";
 
-const getLocalized = (obj, key, lang) => {
-  if (!obj) return "";
-
-  const localizedObj = obj[`${key}_json`];
-
-  if (localizedObj && typeof localizedObj === "object") {
-    return localizedObj[lang] ?? obj[key];
-  }
-
-  return lang === "ur" ? obj[`${key}_ur`] ?? obj[key] : obj[key];
-};
 
 const HomeScreen = () => {
   const { t, i18n } = useTranslation();
@@ -48,8 +37,6 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const { isSignedIn, signOut } = useClerk();
-  const { user, isLoaded } = useUser();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const loadData = async () => {
     try {
@@ -191,6 +178,8 @@ const HomeScreen = () => {
 
   if (loading) return <LoadingSpinner />;
 
+  // console.log(recipes,'yeh main tab ki')
+
   return (
     <View style={homeStyles.container}>
       <ScrollView
@@ -322,7 +311,6 @@ const HomeScreen = () => {
             categories={categories}
             selectCategory={selectCategory}
             onSelectCategory={handleCategorySelect}
-            getLocalized={getLocalized}
             lang={lang}
           />
         )}

@@ -16,8 +16,15 @@ export default function Checkreq() {
       try {
         const response = await fetch(`${Admin_URL}`);
         const data = await response.json();
-        setRecipes(data); 
-        console.log(data,'data recipes');
+        setRecipes(
+          Array.isArray(data.meals)
+            ? data.meals.map(meal => ({
+                ...meal,
+                id: meal.id || meal.idMeal || Math.random().toString(36).substr(2, 9)
+              }))
+            : []
+        );
+        console.log(data, "data recipes");
       } catch (error) {
         setRecipes(null);
         console.log(error.message);
@@ -27,16 +34,20 @@ export default function Checkreq() {
     };
     loadData();
   }, []);
+  console.log(recipes, "yeh check walay ki");
 
   if (loading) return <LoadingSpinner />;
 
   return (
     <View>
-      {recipes?.length > 0 ? (
+      {recipes?.filter((item) => !!item).length > 0 ? (
         <FlatList
-          data={recipes}
-          renderItem={({ item }) => <ApproveRecipeCard recipe={item} />}
-          keyExtractor={(item) => item?.id?.toString()}
+          data={recipes.filter((item) => !!item)}
+          renderItem={({ item }) => {
+            console.log("FlatList item:", item);
+            return item ? <ApproveRecipeCard recipe={item} /> : null;
+          }}
+          keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
           numColumns={1}
           contentContainerStyle={homeStyles.adminrecipesGrid}
           scrollEnabled={false}

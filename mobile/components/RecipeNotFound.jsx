@@ -7,23 +7,24 @@ import { COLORS } from "../constant/color";
 
 const RecipeNotFound = () => {
   const router = useRouter();
+  const recipeDetailFileStyles = recipeDetailStyles();
 
   return (
     <LinearGradient
       colors={[COLORS.primary, COLORS.background]}
-      style={recipeDetailStyles.errorContainer}
+      style={recipeDetailFileStyles.errorContainer}
     >
-      <View style={recipeDetailStyles.errorContent}>
+      <View style={recipeDetailFileStyles.errorContent}>
         <Ionicons name="restaurant-outline" size={80} color={COLORS.white} />
-        <Text style={recipeDetailStyles.errorTitle}>Recipe not found</Text>
-        <Text style={recipeDetailStyles.errorDescription}>
+        <Text style={recipeDetailFileStyles.errorTitle}>Recipe not found</Text>
+        <Text style={recipeDetailFileStyles.errorDescription}>
           Sorry, we couldn&apos;t find this recipe. Please try again.
         </Text>
         <TouchableOpacity
-          style={recipeDetailStyles.errorButton}
+          style={recipeDetailFileStyles.errorButton}
           onPress={() => router.back()}
         >
-          <Text style={recipeDetailStyles.errorButtonText}>Go Back</Text>
+          <Text style={recipeDetailFileStyles.errorButtonText}>Go Back</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>

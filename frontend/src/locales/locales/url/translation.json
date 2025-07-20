@@ -1,0 +1,14 @@
+{
+  "welcome": "خوش آمدید",
+  "login": "لاگ ان کریں",
+  "logout": "لاگ آؤٹ",
+  "home": "ہوم",
+  "recipes": "ترکیبیں",
+  "language": "زبان",
+  "english": "انگریزی",
+  "urdu": "اردو",
+  "Add Recipe": "ترکیب شامل کریں",
+  "feature": "خصوصی",
+  "noRecipes": "کوئی ترکیب نہیں ملی",
+  "tryDifferentCategory": "مختلف زمرہ آزمائیں"
+}

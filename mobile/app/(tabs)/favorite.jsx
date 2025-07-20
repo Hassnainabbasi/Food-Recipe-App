@@ -1,7 +1,7 @@
-import { useClerk, useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -17,6 +17,7 @@ import NoFavoritesFound from "../../components/FavoriteNotFound";
 import FavoriteRecipeCard from "../../components/FavoriteRecipeCard";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { COLORS } from "../../constant/color";
+import { HOST_URL } from "../../constant/constant";
 import { Fav_URL } from "../../services/mealApi";
 
 export const getLocalized = (obj, key, lang = "en") => {
@@ -25,19 +26,38 @@ export const getLocalized = (obj, key, lang = "en") => {
 };
 
 export default function FavoriteScreen() {
-  const { signOut, isSignedIn } = useClerk();
-  const { user } = useUser();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [favoritesRecipe, setFavoritesRecipe] = useState([]);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
 
   useEffect(() => {
-    if (!isSignedIn || !user) {
-      router.replace("/(auth)/sign-in");
-    }
-  }, [isSignedIn, user]);
+    const checkToken = async () => {
+      const token = await SecureStore.getItemAsync("token");
+      if (token) {
+        const res = await fetch(`${HOST_URL}/api/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+          await SecureStore.deleteItemAsync("token");
+        }
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkToken();
+  }, []);
 
   useEffect(() => {
     if (!user) return;

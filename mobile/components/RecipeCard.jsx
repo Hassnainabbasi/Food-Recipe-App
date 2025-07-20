@@ -10,12 +10,12 @@ const RecipeCard = ({ recipe }) => {
   return (
     <TouchableOpacity
       style={recipeCardStyles.containerDetail}
-      onPress={() => router.push(`/recipe/${recipe.id}`)}
+      onPress={() => router.push(`/recipe/${recipe?.id}`)}
       activeOpacity={0.8}
     >
       <View style={recipeCardStyles.imageContainerDetail}>
         <Image
-          source={{ uri: recipe.image }}
+          source={{ uri: recipe?.image }}
           style={recipeCardStyles.image}
           contentFit="cover"
           transition={300}
@@ -24,16 +24,16 @@ const RecipeCard = ({ recipe }) => {
 
       <View style={recipeCardStyles.contentDetail}>
         <Text style={recipeCardStyles.title} numberOfLines={2}>
-          {recipe.title}
+          {recipe?.title}
         </Text>
-        {recipe.description && (
+        {recipe?.description && (
           <Text style={recipeCardStyles.description} numberOfLines={2}>
-            {recipe.description}
+            {recipe?.description}
           </Text>
         )}
 
         <View style={recipeCardStyles.footer}>
-          {recipe.cookTime && (
+          {recipe?.cookTime && (
             <View style={recipeCardStyles.timeContainer}>
               <Ionicons
                 name="time-outline"
@@ -43,7 +43,7 @@ const RecipeCard = ({ recipe }) => {
               <Text style={recipeCardStyles.timeText}>{recipe.cookTime}</Text>
             </View>
           )}
-          {recipe.servings && (
+          {recipe?.servings && (
             <View style={recipeCardStyles.servingsContainer}>
               <Ionicons
                 name="people-outline"
@@ -51,7 +51,7 @@ const RecipeCard = ({ recipe }) => {
                 color={COLORS.textLight}
               />
               <Text style={recipeCardStyles.servingsText}>
-                {recipe.servings}
+                {recipe?.servings}
               </Text>
             </View>
           )}

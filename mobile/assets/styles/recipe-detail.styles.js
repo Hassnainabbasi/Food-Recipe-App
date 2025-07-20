@@ -3,7 +3,7 @@ import { COLORS } from "../../constant/color";
 
 const { height } = Dimensions.get("window");
 
-export const recipeDetailStyles = StyleSheet.create({
+export const recipeDetailStyles = (recipe) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
@@ -16,9 +16,9 @@ export const recipeDetailStyles = StyleSheet.create({
     top: 10,
     right: 10,
     backgroundColor:
-      recipe.status === "approved"
+      recipe?.status === "approved"
         ? "#4ade80"
-        : recipe.status === "rejected"
+        : recipe?.status === "rejected"
         ? "#f87171"
         : "#facc15",
     paddingHorizontal: 10,

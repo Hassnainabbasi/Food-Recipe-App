@@ -5,13 +5,13 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { recipeDetailStyles } from "../../assets/styles/recipe-detail.styles";
+import { recipeDetailStyles } from "../../assets/styles/recipe-detail.styles.js";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { COLORS } from "../../constant/color";
 import { HOST_URL } from "../../constant/constant";
 import { MealApi } from "../../services/mealApi";
 
-export default function RecipeDetailPage() {
+export default function AdminRecipeDetailPage() {
   const { id: recipeId } = useLocalSearchParams();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -44,9 +44,11 @@ export default function RecipeDetailPage() {
         router.push("/(auth)/sign-in");
       }
     };
-
+    if (recipe) {
+      console.log(recipe, "this recipe admin recipe");
+    }
     checkToken();
-  }, []);
+  }, [recipe]);
 
   useEffect(() => {
     if (!userId || !recipeId) return;
@@ -100,104 +102,106 @@ export default function RecipeDetailPage() {
 
   if (loading) return <LoadingSpinner />;
 
+  const recipeDetailFileStyles = recipeDetailStyles(recipe);
+
   return (
-    <View style={recipeDetailStyles.container}>
+    <View style={recipeDetailFileStyles.container}>
       <ScrollView>
-        <View style={recipeDetailStyles.headerContainer}>
-          <View style={recipeDetailStyles.imageContainer}>
+        <View style={recipeDetailFileStyles.headerContainer}>
+          <View style={recipeDetailFileStyles.imageContainer}>
             <Image
               source={{ uri: recipe?.image }}
-              style={recipeDetailStyles.headerImage}
+              style={recipeDetailFileStyles.headerImage}
               contentFit="cover"
             />
             <LinearGradient
               colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.9)"]}
-              style={recipeDetailStyles.gradientOverlay}
+              style={recipeDetailFileStyles.gradientOverlay}
             />
           </View>
-          <View style={recipeDetailStyles.floatingButtons}>
+          <View style={recipeDetailFileStyles.floatingButtons}>
             <TouchableOpacity
-              style={recipeDetailStyles.floatingButton}
+              style={recipeDetailFileStyles.floatingButton}
               onPress={() => router.back()}
             >
               <Ionicons name="arrow-back" size={24} color={COLORS.white} />
             </TouchableOpacity>
           </View>
-          <View style={recipeDetailStyles.titleSection}>
-            <View style={recipeDetailStyles.categoryBadge}>
-              <Text style={recipeDetailStyles.categoryText}>
+          <View style={recipeDetailFileStyles.titleSection}>
+            <View style={recipeDetailFileStyles.categoryBadge}>
+              <Text style={recipeDetailFileStyles.categoryText}>
                 {recipe?.category}
               </Text>
             </View>
-            <Text style={recipeDetailStyles.recipeTitle}>{recipe?.title}</Text>
+            <Text style={recipeDetailFileStyles.recipeTitle}>{recipe?.title}</Text>
             {recipe?.area && (
-              <View style={recipeDetailStyles.locationRow}>
+              <View style={recipeDetailFileStyles.locationRow}>
                 <Ionicons
                   name="location-outline"
                   size={16}
                   color={COLORS.white}
                 />
-                <Text style={recipeDetailStyles.locationText}>
+                <Text style={recipeDetailFileStyles.locationText}>
                   {recipe?.area} Cuisine
                 </Text>
               </View>
             )}
           </View>
         </View>
-        <View style={recipeDetailStyles.contentSection}>
-          <View style={recipeDetailStyles.statsContainer}>
-            <View style={recipeDetailStyles.statCard}>
+        <View style={recipeDetailFileStyles.contentSection}>
+          <View style={recipeDetailFileStyles.statsContainer}>
+            <View style={recipeDetailFileStyles.statCard}>
               <LinearGradient
                 colors={["#FF6B6B", "#FF8E53"]}
-                style={recipeDetailStyles.statIconContainer}
+                style={recipeDetailFileStyles.statIconContainer}
               >
                 <Ionicons name="time" size={20} color={COLORS.white} />
               </LinearGradient>
-              <Text style={recipeDetailStyles.statValue}>
+              <Text style={recipeDetailFileStyles.statValue}>
                 {recipe?.cookTime}
               </Text>
-              <Text style={recipeDetailStyles.statLabel}>Prep Time</Text>
+              <Text style={recipeDetailFileStyles.statLabel}>Prep Time</Text>
             </View>
 
-            <View style={recipeDetailStyles.statCard}>
+            <View style={recipeDetailFileStyles.statCard}>
               <LinearGradient
                 colors={["#4ECDC4", "#44A08D"]}
-                style={recipeDetailStyles.statIconContainer}
+                style={recipeDetailFileStyles.statIconContainer}
               >
                 <Ionicons name="people" size={20} color={COLORS.white} />
               </LinearGradient>
-              <Text style={recipeDetailStyles.statValue}>
+              <Text style={recipeDetailFileStyles.statValue}>
                 {recipe?.servings}
               </Text>
-              <Text style={recipeDetailStyles.statLabel}>Servings</Text>
+              <Text style={recipeDetailFileStyles.statLabel}>Servings</Text>
             </View>
           </View>
-          <View style={recipeDetailStyles.sectionContainer}>
-            <View style={recipeDetailStyles.sectionTitleRow}>
+          <View style={recipeDetailFileStyles.sectionContainer}>
+            <View style={recipeDetailFileStyles.sectionTitleRow}>
               <LinearGradient
                 colors={[COLORS.primary, COLORS.primary + "80"]}
-                style={recipeDetailStyles.sectionIcon}
+                style={recipeDetailFileStyles.sectionIcon}
               >
                 <Ionicons name="list" size={16} color={COLORS.white} />
               </LinearGradient>
-              <Text style={recipeDetailStyles.sectionTitle}>Ingredients</Text>
-              <View style={recipeDetailStyles.countBadge}>
-                <Text style={recipeDetailStyles.countText}>
+              <Text style={recipeDetailFileStyles.sectionTitle}>Ingredients</Text>
+              <View style={recipeDetailFileStyles.countBadge}>
+                <Text style={recipeDetailFileStyles.countText}>
                   {recipe.ingredients.length}
                 </Text>
               </View>
             </View>
           </View>
-          <View style={recipeDetailStyles.ingredientsGrid}>
+          <View style={recipeDetailFileStyles.ingredientsGrid}>
             {recipe?.ingredients.map((ing, index) => (
-              <View key={ing} style={recipeDetailStyles.ingredientCard}>
-                <View style={recipeDetailStyles.ingredientNumber}>
-                  <Text style={recipeDetailStyles.ingredientNumberText}>
+              <View key={ing} style={recipeDetailFileStyles.ingredientCard}>
+                <View style={recipeDetailFileStyles.ingredientNumber}>
+                  <Text style={recipeDetailFileStyles.ingredientNumberText}>
                     {index + 1}
                   </Text>
                 </View>
-                <Text style={recipeDetailStyles.ingredientText}>{ing}</Text>
-                <View style={recipeDetailStyles.ingredientCheck}>
+                <Text style={recipeDetailFileStyles.ingredientText}>{ing}</Text>
+                <View style={recipeDetailFileStyles.ingredientCheck}>
                   <Ionicons
                     name="checkmark-circle-outline"
                     size={20}
@@ -207,37 +211,37 @@ export default function RecipeDetailPage() {
               </View>
             ))}
           </View>
-          <View style={recipeDetailStyles.instructionTitle}>
-            <View style={recipeDetailStyles.sectionTitleRow}>
+          <View style={recipeDetailFileStyles.instructionTitle}>
+            <View style={recipeDetailFileStyles.sectionTitleRow}>
               <LinearGradient
                 colors={["#9C27B0", "#673AB7"]}
-                style={recipeDetailStyles.sectionIcon}
+                style={recipeDetailFileStyles.sectionIcon}
               >
                 <Ionicons name="book" size={16} color={COLORS.white} />
               </LinearGradient>
-              <Text style={recipeDetailStyles.sectionTitle}>Instructions</Text>
+              <Text style={recipeDetailFileStyles.sectionTitle}>Instructions</Text>
             </View>
-            <View style={recipeDetailStyles.instructionsContainer}>
+            <View style={recipeDetailFileStyles.instructionsContainer}>
               {recipe?.instructions.map((instruction, index) => (
-                <View key={index} style={recipeDetailStyles.instructionCard}>
+                <View key={index} style={recipeDetailFileStyles.instructionCard}>
                   <LinearGradient
                     colors={[COLORS.primary, COLORS.primary + "CC"]}
-                    style={recipeDetailStyles.stepIndicator}
+                    style={recipeDetailFileStyles.stepIndicator}
                   >
-                    <Text style={recipeDetailStyles.stepNumber}>
+                    <Text style={recipeDetailFileStyles.stepNumber}>
                       {index + 1}
                     </Text>
                   </LinearGradient>
-                  <View style={recipeDetailStyles.instructionContent}>
-                    <Text style={recipeDetailStyles.instructionText}>
+                  <View style={recipeDetailFileStyles.instructionContent}>
+                    <Text style={recipeDetailFileStyles.instructionText}>
                       {instruction}
                     </Text>
-                    <View style={recipeDetailStyles.instructionFooter}>
-                      <Text style={recipeDetailStyles.stepLabel}>
+                    <View style={recipeDetailFileStyles.instructionFooter}>
+                      <Text style={recipeDetailFileStyles.stepLabel}>
                         Step {index + 1}
                       </Text>
                       <TouchableOpacity
-                        style={recipeDetailStyles.completeButton}
+                        style={recipeDetailFileStyles.completeButton}
                       >
                         <Ionicons
                           name="checkmark"
@@ -251,31 +255,31 @@ export default function RecipeDetailPage() {
               ))}
             </View>
           </View>
-          <View style={recipeDetailStyles.adminApproveContainer}>
+          <View style={recipeDetailFileStyles.adminApproveContainer}>
             <TouchableOpacity
-              style={recipeDetailStyles.primaryButton}
+              style={recipeDetailFileStyles.primaryButton}
               disabled={isSaving}
               onPress={() => updateStatus("approved")}
             >
               <LinearGradient
                 colors={[COLORS.primary, COLORS.primary + "CC"]}
-                style={recipeDetailStyles.buttonGradient}
+                style={recipeDetailFileStyles.buttonGradient}
               >
                 <Ionicons name="checkmark" size={20} color={COLORS.white} />
-                <Text style={recipeDetailStyles.buttonText}>Approve</Text>
+                <Text style={recipeDetailFileStyles.buttonText}>Approve</Text>
               </LinearGradient>
             </TouchableOpacity>
             <TouchableOpacity
-              style={recipeDetailStyles.primaryButton}
+              style={recipeDetailFileStyles.primaryButton}
               disabled={isSaving}
               onPress={() => updateStatus("rejected")}
             >
               <LinearGradient
                 colors={[COLORS.primary, COLORS.primary + "CC"]}
-                style={recipeDetailStyles.buttonGradient}
+                style={recipeDetailFileStyles.buttonGradient}
               >
                 <Ionicons name="close" size={20} color={COLORS.white} />
-                <Text style={recipeDetailStyles.buttonText}>Reject</Text>
+                <Text style={recipeDetailFileStyles.buttonText}>Reject</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>

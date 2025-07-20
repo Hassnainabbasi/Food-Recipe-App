@@ -2,8 +2,7 @@ export const BASE_URL = "https://food-recipe-app-lnjg.vercel.app/api/recipe";
 export const WEB_URL = "https://food-recipe-app-lnjg.vercel.app/api/recipe";
 export const Fav_URL = "https://food-recipe-app-lnjg.vercel.app/api";
 export const Admin_URL = "https://food-recipe-app-lnjg.vercel.app/api/admin";
-export const Admin_Single_Url =
-  "https://food-recipe-app-lnjg.vercel.app/api/admin";
+export const Admin_Single_Url = "https://food-recipe-app-lnjg.vercel.app/api/admin";
 
 export const MealApi = {
   searchMealsByName: async (query) => {
@@ -58,10 +57,10 @@ export const MealApi = {
     try {
       const res = await fetch(`${Admin_URL}`);
       const data = await res.json();
-      return data.meals ? data.meals[0] : null;
+      return data.meals || [];
     } catch (e) {
       console.log("getRandomMeal error:", e);
-      return null;
+      return [];
     }
   },
 
@@ -73,7 +72,17 @@ export const MealApi = {
       const meals = await Promise.all(promises);
       return meals.filter((meal) => meal !== null);
     } catch (e) {
-      console.log("getRandomMeals error:", e);
+      getAdminMeals: async () => {
+        try {
+          const res = await fetch(`${Admin_URL}`);
+          const data = await res.json();
+          return data.meals || [];
+        } catch (e) {
+          console.log("getAdminMeals error:", e);
+          return [];
+        }
+      },
+        console.log("getRandomMeals error:", e);
       return [];
     }
   },
@@ -116,24 +125,38 @@ export const MealApi = {
   },
   transformMealData: (meal) => {
     if (!meal) return null;
-    const ingredients = Array.isArray(meal.ingredients)
-      ? meal.ingredients.map((ing) => ing.en || "")
-      : [];
+    // Try to extract ingredients from both custom and API fields
+    let ingredients = [];
+    if (Array.isArray(meal.ingredients)) {
+      ingredients = meal.ingredients.map((ing) => ing.en || ing || "");
+    } else {
+      // For TheMealDB API style: strIngredient1, strIngredient2, ...
+      for (let i = 1; i <= 20; i++) {
+        const ing = meal[`strIngredient${i}`];
+        if (ing && ing.trim() !== "") ingredients.push(ing);
+      }
+    }
 
     return {
-      id: meal.id,
-      title: meal.title,
+      id: meal.id || meal.idMeal,
+      title: meal.title || meal.strMeal,
       description: meal.description
         ? meal.description.substring(0, 120) + "..."
+        : meal.strInstructions
+        ? meal.strInstructions.substring(0, 120) + "..."
         : "Delicious meal from Recipe",
-      image: meal.image,
-      cookTime: meal.cookTime,
-      servings: meal.servings,
-      category: meal.category,
-      area: meal.area?.[0]?.en || "",
+      image: meal.image || meal.strMealThumb,
+      cookTime: meal.cookTime || meal.strCookTime || "",
+      servings: meal.servings || meal.strServings || "",
+      category: meal.category || meal.strCategory || "",
+      area: meal.area?.[0]?.en || meal.strArea || "",
       originalData: meal,
       instructions: meal.instructions
         ? meal.instructions.split(/\r?\n/).filter((line) => line.trim() !== "")
+        : meal.strInstructions
+        ? meal.strInstructions
+            .split(/\r?\n/)
+            .filter((line) => line.trim() !== "")
         : [],
       ingredients,
     };

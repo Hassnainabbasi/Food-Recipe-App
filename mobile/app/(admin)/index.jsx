@@ -84,6 +84,7 @@ export default function index() {
   }, []);
 
   if (loading) return <LoadingSpinner />;
+
   return (
     <View style={authStyles.adminContainer}>
       <ScrollView>
@@ -104,10 +105,12 @@ export default function index() {
           )}
         </View>
         <View>
-          {recipes?.length > 0 ? (
+          {recipes?.filter((item) => !!item).length > 0 ? (
             <FlatList
-              data={recipes}
-              renderItem={({ item }) => <AdminRecipeCard recipe={item} />}
+              data={recipes.filter((item) => !!item)}
+              renderItem={({ item }) =>
+                item ? <AdminRecipeCard recipe={item} /> : null
+              }
               keyExtractor={(item) => item?.id?.toString()}
               numColumns={2}
               columnWrapperStyle={homeStyles.row}

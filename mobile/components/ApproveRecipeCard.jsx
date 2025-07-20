@@ -1,15 +1,16 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { recipeCardStyles } from "../assets/styles/homes.styles";
-import { recipeDetailStyles } from "../assets/styles/recipe-detail.styles";
-import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../constant/color";
+import { recipeDetailStyles } from "../assets/styles/recipe-detail.styles";
 
 const ApproveRecipeCard = ({ recipe }) => {
+  const recipeDetailFileStyles = recipeDetailStyles(recipe);
+
   const router = useRouter();
-  console.log(recipe, "recipe");
+  console.log(recipe, "recipe this is admin approve card");
   return (
     <TouchableOpacity
       style={recipeCardStyles.adminContainer}
@@ -23,20 +24,20 @@ const ApproveRecipeCard = ({ recipe }) => {
           contentFit="cover"
           transition={300}
         />
-        <LinearGradient
+        {/* <LinearGradient
           colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.9)"]}
-          style={recipeDetailStyles.gradientOverlay}
-        />
-        {recipe?.status && (
-          <View style={recipeDetailStyles.recipeStatus}>
+          style={recipeDetailFileStyles.gradientOverlay}
+        /> */}
+        {/* {recipe?.status && (
+          <View style={recipeDetailFileStyles.recipeStatus}>
             <Text style={{ fontSize: 10, fontWeight: "700", color: "#000" }}>
               {recipe?.status.toUpperCase()}
             </Text>
           </View>
-        )}
-        <View style={recipeDetailStyles.floatingButtons}>
+        )} */}
+        <View style={recipeDetailFileStyles.floatingButtons}>
           <TouchableOpacity
-            style={recipeDetailStyles.floatingButton}
+            style={recipeDetailFileStyles.floatingButton}
             onPress={() => router.back()}
           >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />

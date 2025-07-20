@@ -1,4 +1,3 @@
-import "../../constant/setup";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -14,20 +13,9 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import RecipeCard from "../../components/RecipeCard";
 import RecipeNotFound from "../../components/RecipeNotFound";
 import { COLORS } from "../../constant/color";
-import useDebounce from "../../hooks/useDebounce";
+import "../../constant/setup";
+import useDebounce from "../../hooks/useDebounce";  
 import { MealApi } from "../../services/mealApi";
-
-const getLocalized = (obj, key, lang) => {
-  if (!obj) return "";
-
-  const localizedObj = obj[`${key}_json`];
-
-  if (localizedObj && typeof localizedObj === "object") {
-    return localizedObj[lang] ?? obj[key];
-  }
-
-  return lang === "ur" ? obj[`${key}_ur`] ?? obj[key] : obj[key];
-};
 
 export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -98,6 +86,7 @@ export default function SearchScreen() {
   if (initialLoading) return <LoadingSpinner />;
 
   console.log(searchQuery, "this is serach query");
+  console.log(recipes, "yeh search ki ");
 
   return (
     <View style={searchStyles.container}>
@@ -144,10 +133,10 @@ export default function SearchScreen() {
         </View>
       ) : (
         <FlatList
-          data={recipes}
-          renderItem={({ item }) => (
-            <RecipeCard lang={lang} getLocalized={getLocalized} recipe={item} />
-          )}
+          data={recipes.filter((item) => !!item)}
+          renderItem={({ item }) =>
+            item ? <RecipeCard recipe={item} /> : null
+          }
           numColumns={2}
           columnWrapperStyle={searchStyles.row}
           keyExtractor={(item) => item?.id?.toString()}
