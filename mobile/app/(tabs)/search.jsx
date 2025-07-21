@@ -14,7 +14,7 @@ import RecipeCard from "../../components/RecipeCard";
 import RecipeNotFound from "../../components/RecipeNotFound";
 import { COLORS } from "../../constant/color";
 import "../../constant/setup";
-import useDebounce from "../../hooks/useDebounce";  
+import useDebounce from "../../hooks/useDebounce";
 import { MealApi } from "../../services/mealApi";
 
 export default function SearchScreen() {
@@ -39,7 +39,7 @@ export default function SearchScreen() {
     let result = nameSearch;
 
     if (result.length === 0) {
-      const ingredientResults = await MealApi.filterByIngredent(query);
+      const ingredientResults = await MealApi.filterByIngredient(query);
       result = ingredientResults;
     }
 
@@ -55,7 +55,7 @@ export default function SearchScreen() {
         const results = await performSearch("");
         setRecipes(results);
       } catch (error) {
-        console.error(error);
+        console.error(error.message);
       } finally {
         setInitialLoading(false);
       }
@@ -73,7 +73,7 @@ export default function SearchScreen() {
         const result = await performSearch(debouncedSearchQuery);
         setRecipes(result);
       } catch (error) {
-        console.error(error);
+        console.error(error.message);
         setRecipes([]);
       } finally {
         setLoading(false);

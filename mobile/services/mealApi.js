@@ -14,7 +14,7 @@ export const MealApi = {
       console.log(data, "search");
       return data.meals || [];
     } catch (e) {
-      console.log("searchMealsByName error:", e);
+      console.log("searchMealsByName error:", e.message);
       return [];
     }
   },

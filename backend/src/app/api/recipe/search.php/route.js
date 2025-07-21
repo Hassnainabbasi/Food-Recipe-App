@@ -1,7 +1,7 @@
 import { db } from "../../../config/drizzle";
 import { recipesTable } from "../../../db/schema";
 import { NextResponse } from "next/server";
-import { ilike } from "drizzle-orm";
+import { and, eq, ilike } from "drizzle-orm";
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
@@ -36,7 +36,7 @@ export async function GET(req) {
       }
     );
   } catch (error) {
-    console.error("Search error:", error);
+    console.error("Search error:", error.message);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
